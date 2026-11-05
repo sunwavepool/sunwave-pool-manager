@@ -32,7 +32,24 @@
 .rent-month-amount .status{font-size:10px;padding:4px 7px;margin-top:5px}
 @media(max-width:760px){.import-summary{padding:19px}.import-shares{width:100%;gap:7px}.import-shares span{flex:1;min-width:85px;padding:10px}.import-shares strong{font-size:12px}.rent-month-card{align-items:flex-start}.rent-month-right{flex-direction:column;align-items:flex-end}.rent-month-amount .status{font-size:9px}.rent-month-note{font-size:10px}}
 
-  </style>
+  
+/* v3: state-only rent reconciliation; does not produce cash transactions. */
+.bulk-reconcile-panel{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 20px;background:#f7fcfb;border:1px solid #cce9e4;border-radius:14px;margin:0 0 20px}
+.bulk-reconcile-panel strong{font-size:15px;color:#195466}
+.bulk-reconcile-panel p{font-size:12px;color:#557987;line-height:1.65;margin:7px 0}
+.bulk-reconcile-panel span{font-size:12px;color:#168365;font-weight:800}
+.bulk-rent-list{display:grid;gap:8px;max-height:46vh;overflow:auto;padding-right:2px}
+.bulk-rent-row{display:flex;align-items:center;gap:12px;border:1px solid #e2edf0;border-radius:11px;padding:12px 13px;cursor:pointer;background:white}
+.bulk-rent-row input{width:19px;height:19px;accent-color:#0796a5;flex-shrink:0}
+.bulk-rent-row span{display:flex;flex-direction:column;gap:4px}
+.bulk-rent-row strong{font-size:13px;color:#204256}
+.bulk-rent-row small{font-size:11px;color:#708b99;line-height:1.5}
+.bulk-rent-row.is-done{background:#f2faf6;border-color:#d9eae1;opacity:.86;cursor:default}
+.bulk-note{margin-top:14px}
+.bulk-note textarea{min-height:73px;border:1px solid #dce8ed;border-radius:11px;padding:11px 12px;width:100%;resize:vertical;font:inherit;color:#284d60}
+.rent-card-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:760px){.bulk-reconcile-panel{flex-direction:column;align-items:stretch;padding:14px}.bulk-reconcile-panel .btn{width:100%}.bulk-rent-list{max-height:39vh}.rent-card-actions{flex-direction:column}.rent-card-actions .btn{width:100%}}
+</style>
   <title>Sunwave Pool | Quản lý thu chi</title>
 </head>
 <body>
@@ -123,7 +140,7 @@
   const compact = val => { const n=num(val); if(Math.abs(n)>=1e9) return `${(n/1e9).toFixed(n%1e9===0?0:1)} tỷ`; if(Math.abs(n)>=1e6) return `${(n/1e6).toFixed(n%1e6===0?0:1)} tr`; if(Math.abs(n)>=1e3) return `${Math.round(n/1000)}k`; return String(Math.round(n)); };
   const esc = val => String(val??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const uid = () => (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`);
-  const defaultDb = () => ({version:2,settings:{name:'Sunwave Pool',monthlyRent:0,rentDueDay:0,rentStart:'2026-01',landlord:''},rentSchedule:[],seedImported:false,rentPayments:[],expenses:[],income:[]});
+  const defaultDb = () => ({version:3,settings:{name:'Sunwave Pool',monthlyRent:0,rentDueDay:0,rentStart:'2026-01',landlord:''},rentSchedule:[],seedImported:false,rentPayments:[],rentReconciliations:[],expenses:[],income:[]});
   const validPeriod = s => typeof s==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(s);
   const validDate = s => typeof s==='string'&&/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(s)&&!Number.isNaN(Date.parse(`${s}T00:00:00`));
   const normalize = raw => {
@@ -137,6 +154,9 @@
     sanitized.seedImported=raw.seedImported===true;
     sanitized.rentSchedule=(Array.isArray(raw.rentSchedule)?raw.rentSchedule:[]).filter(r=>validPeriod(r.period)&&Number.isFinite(Number(r.amount))&&num(r.amount)>0).slice(0,2400).map(r=>({id:String(r.id||uid()),period:r.period,amount:num(r.amount),shares:{'Hoàng':num(r.shares?.['Hoàng']),'Đức':num(r.shares?.['Đức']),'Tuấn':num(r.shares?.['Tuấn'])},note:String(r.note||'').slice(0,1500),source:String(r.source||'Nhập thủ công').slice(0,150),tracking:r.tracking==='tracked'?'tracked':'unknown'}));
     sanitized.rentPayments=raw.rentPayments.filter(r=>validPeriod(r.period)&&validDate(r.date)&&num(r.amount)>0).slice(0,20000).map(r=>({id:String(r.id||uid()),period:r.period,date:r.date,amount:num(r.amount),method:String(r.method||'Chuyển khoản').slice(0,80),note:String(r.note||'').slice(0,1500)}));
+    // Independent reconciliations: confirmed settled, but no fabricated cash transaction/date/method.
+    const confirmations=Array.isArray(raw.rentReconciliations)?raw.rentReconciliations:[];
+    sanitized.rentReconciliations=confirmations.filter(r=>r && validPeriod(r.period) && r.status==='paid' && Number.isSafeInteger(Number(r.amountConfirmed)) && Number(r.amountConfirmed)>0).slice(0,2400).map(r=>({period:r.period,status:'paid',amountConfirmed:Number(r.amountConfirmed),note:String(r.note||'').slice(0,500)})).filter((r,i,all)=>all.findIndex(x=>x.period===r.period)===i);
     sanitized.expenses=raw.expenses.filter(r=>validDate(r.date)&&num(r.amount)>0).slice(0,20000).map(r=>({id:String(r.id||uid()),date:r.date,title:String(r.title||'Chi phí').slice(0,180),category:String(r.category||'Khác').slice(0,100),amount:num(r.amount),paid:r.paid===true,payer:String(r.payer||'Quỹ hồ bơi').slice(0,90),method:String(r.method||'Tiền mặt').slice(0,80),note:String(r.note||'').slice(0,1500)}));
     sanitized.income=raw.income.filter(r=>validDate(r.date)&&num(r.amount)>0).slice(0,20000).map(r=>({id:String(r.id||uid()),date:r.date,title:String(r.title||'Khoản thu').slice(0,180),category:String(r.category||'Khác').slice(0,100),amount:num(r.amount),method:String(r.method||'Tiền mặt').slice(0,80),note:String(r.note||'').slice(0,1500)}));
     return sanitized;
@@ -156,20 +176,27 @@
   const periodOf = date => String(date).slice(0,7);
   const rentRow = period => db.rentSchedule.find(r=>r.period===period);
   const rentExpected = period => rentRow(period)?.amount ?? (db.settings.monthlyRent>0 && monthIndex(period)>=monthIndex(db.settings.rentStart)?db.settings.monthlyRent:0);
-  const rentVerified = period => {const row=rentRow(period);return !row || row.tracking==='tracked' || rentPaid(period)>0;};
+  const rentReconciliation = period => db.rentReconciliations.find(r=>r.period===period);
+  const rentFullConfirmed = period => {const item=rentReconciliation(period),expected=rentExpected(period);return !!item && expected>0 && item.status==='paid' && item.amountConfirmed===expected;};
+  const rentConfirmationStale = period => !!rentReconciliation(period) && !rentFullConfirmed(period);
+  const rentVerified = period => {const row=rentRow(period);return !row || row.tracking==='tracked' || rentPaid(period)>0 || rentFullConfirmed(period);};
   const rentValue = period => rentExpected(period)>0?money(rentExpected(period)):'Chưa nhập';
   const annualRows = year => db.rentSchedule.filter(r=>r.period.startsWith(year+'-'));
   const yearlyRent = year => sum(annualRows(year));
   const yearlyShare = (year,name) => sum(annualRows(year),r=>r.shares[name]);
+  const yearlyConfirmedRows = year => annualRows(year).filter(r=>rentFullConfirmed(r.period));
+  const yearlyConfirmedTotal = year => sum(yearlyConfirmedRows(year));
   const rentPaymentsPeriod = period => db.rentPayments.filter(r=>r.period===period);
   const rentPaid = period => sum(rentPaymentsPeriod(period));
-  const rentDue = period => rentExpected(period)>0 && !rentVerified(period) ? null : Math.max(0,rentExpected(period)-rentPaid(period));
+  const rentDue = period => rentFullConfirmed(period)?0:(rentExpected(period)>0 && !rentVerified(period) ? null : Math.max(0,rentExpected(period)-rentPaid(period)));
   const dueDate = period => db.settings.rentDueDay>0?`${period}-${pad(db.settings.rentDueDay)}`:null;
   const rentStatus = period => {
     const expected=rentExpected(period);
     if(!expected) return ['Chưa có dữ liệu','config'];
-    if(!rentVerified(period)) return ['Chưa đối chiếu','config'];
+    if(rentFullConfirmed(period)) return ['Đã xác nhận trả đủ','paid'];
     if(rentPaid(period)>=expected) return ['Đã thanh toán','paid'];
+    if(rentConfirmationStale(period)) return ['Cần xác nhận lại','overdue'];
+    if(!rentVerified(period)) return ['Chưa đối chiếu','config'];
     if(rentPaid(period)>0) return ['Thanh toán một phần','due'];
     if(dueDate(period)&&dateNow()>dueDate(period)) return ['Quá hạn đã xác nhận','overdue'];
     if(monthIndex(period)>monthIndex(currentMonth())) return ['Sắp đến hạn','future'];
@@ -199,12 +226,12 @@
     dom.content.innerHTML=({overview:overviewPage,rent:rentPage,expenses:expensePage,income:incomePage,reports:reportPage,settings:settingsPage}[state.tab])();
   }
   function overviewPage(){
-    const p=state.month, expected=rentExpected(p),paid=rentPaid(p),rem=rentDue(p),net=monthNet(p),year=p.slice(0,4),yearTotal=yearlyRent(year);
+    const p=state.month, expected=rentExpected(p),paid=rentPaid(p),rem=rentDue(p),net=monthNet(p),year=p.slice(0,4),yearTotal=yearlyRent(year),verifiedTotal=rentFullConfirmed(p)?expected:paid;
     const recent=db.expenses.filter(x=>periodOf(x.date)===p).sort(safeDateSort).slice(0,5);
     const categoryMap={};db.expenses.filter(x=>periodOf(x.date)===p).forEach(x=>categoryMap[x.category]=(categoryMap[x.category]||0)+x.amount);
     const cats=Object.entries(categoryMap).sort((a,b)=>b[1]-a[1]).slice(0,5), top=Math.max(1,...cats.map(c=>c[1]));
     return `${!db.settings.monthlyRent&&!db.rentSchedule.length&&!db.expenses.length&&!db.income.length?`<div class="hint-banner"><div><strong>Nhập dữ liệu tiền thuê của anh</strong><p>Ứng dụng trên GitHub không chứa dữ liệu riêng tư. Hãy chọn tệp JSON đã được chuyển đổi từ Excel; dữ liệu sẽ được lưu trên trình duyệt này.</p></div><button class="btn primary small" data-action="restore">Nhập dữ liệu JSON</button></div>`:''}
-      ${yearTotal?`<div class="import-summary"><div><div class="import-kicker">SỔ TIỀN THUÊ · ${year} · ${annualRows(year).length} THÁNG ĐÃ NHẬP</div><div class="import-total">${money(yearTotal)}</div><div class="import-desc">Sổ tiền thuê theo từng tháng. Cần đối chiếu riêng các khoản đã thanh toán.</div></div><div class="import-shares"><span>Hoàng <strong>${money(yearlyShare(year,'Hoàng'))}</strong></span><span>Đức <strong>${money(yearlyShare(year,'Đức'))}</strong></span><span>Tuấn <strong>${money(yearlyShare(year,'Tuấn'))}</strong></span></div></div>`:''}
+      ${yearTotal?`<div class="import-summary"><div><div class="import-kicker">SỔ TIỀN THUÊ · ${year} · ${annualRows(year).length} THÁNG ĐÃ NHẬP</div><div class="import-total">${money(yearTotal)}</div><div class="import-desc">Sổ tiền thuê theo từng tháng. Đã xác nhận trả đủ ${yearlyConfirmedRows(year).length}/${annualRows(year).length} kỳ (${money(yearlyConfirmedTotal(year))}); trạng thái xác nhận không phải giao dịch dòng tiền.</div></div><div class="import-shares"><span>Hoàng <strong>${money(yearlyShare(year,'Hoàng'))}</strong></span><span>Đức <strong>${money(yearlyShare(year,'Đức'))}</strong></span><span>Tuấn <strong>${money(yearlyShare(year,'Tuấn'))}</strong></span></div></div>`:''}
       <div class="grid metrics">
         ${statBox('Khoản thu trong tháng',monthIncome(p),'Tổng tiền đã thu', 'up','green')}
         ${statBox('Đã trả tiền thuê',monthRentCash(p),'Tiền thực trả trong tháng','calendar')}
@@ -214,8 +241,9 @@
       <div class="split">
         <div class="panel"><div class="panel-head"><div><h2>Tiến độ thanh toán tiền thuê</h2><p>${monthLabel(p)} · ${db.settings.rentDueDay?`Hạn theo cài đặt: ngày ${pad(db.settings.rentDueDay)}`:'Chưa thiết lập hạn trả'}</p></div><button class="link-button" data-action="nav" data-tab="rent">Xem chi tiết ›</button></div>
           <div class="rent-highlight"><div><small>Tiền thuê phải trả trong kỳ</small><strong>${rentValue(p)}</strong><small>${db.settings.landlord?`Bên cho thuê: ${esc(db.settings.landlord)}`:(rentRow(p)?'Theo sổ tiền thuê từng tháng':'Chưa có bản ghi tiền thuê')}</small></div>${badge(...rentStatus(p))}</div>
-          <div class="stats-row"><span>Đã ghi nhận thực trả <strong>${money(paid)}</strong></span><span>${expected>0?Math.min(100,Math.round(paid/expected*100)):0}%</span></div>
-          <div class="progress" aria-label="Tiến độ thanh toán"><span style="width:${expected>0?Math.min(100,paid/expected*100):0}%"></span></div>
+          <div class="stats-row"><span>Giao dịch thực trả có ngày <strong>${money(paid)}</strong></span><span>${expected>0?Math.min(100,Math.round(verifiedTotal/expected*100)):0}% nghĩa vụ đã xác nhận</span></div>
+          <div class="progress" aria-label="Tiến độ thực trả hoặc xác nhận thanh toán"><span style="width:${expected>0?Math.min(100,verifiedTotal/expected*100):0}%"></span></div>
+          ${rentFullConfirmed(p)?`<p class="data-note">Đã đối chiếu đủ tiền thuê theo xác nhận của anh. Chưa ghi ngày hay phương thức giao dịch nếu chưa có chứng từ.</p>`:''}
           <div class="stats-row"><span>${rem===null?'Tình trạng công nợ':'Còn phải trả đã đối chiếu'}</span><strong class="${rem?'negative-text':'positive-text'}">${rem===null?'Chưa xác nhận':money(rem)}</strong></div>
           <div class="separator"></div><div class="pill-actions"><button class="btn primary small" data-action="new-rent" data-period="${p}">+ Ghi nhận trả tiền thuê</button><button class="btn outline small" data-action="edit-schedule" data-period="${p}">Sửa số tiền thuê</button></div>
         </div>
@@ -231,20 +259,23 @@
   function rentPage(){
     const p=state.month,year=p.slice(0,4), months=Array.from({length:12},(_,i)=>`${year}-${pad(i+1)}`);
     const ps=rentPaymentsPeriod(p).sort(safeDateSort);
-    const assigned=rentRow(p), due=rentDue(p), yearly=annualRows(year);
+    const assigned=rentRow(p), due=rentDue(p), yearly=annualRows(year),confirmed=yearlyConfirmedRows(year);
     const noteRows=yearly.filter(x=>x.note);
     return `<div class="summary-strip"><div class="summary-chip"><span class="label">Tổng tiền thuê ${year} (${yearly.length} tháng)</span><span class="value">${money(yearlyRent(year))}</span></div><div class="summary-chip"><span class="label">Tiền thuê ${monthLabel(p)}</span><span class="value">${rentValue(p)}</span></div><div class="summary-chip ${due!==null&&due>0?'alert':''}"><span class="label">Công nợ tháng này</span><span class="value">${due===null?'Chưa đối chiếu':money(due)}</span></div></div>
-      ${yearly.length?`<p class="soft-note">Đang quản lý ${yearly.length} kỳ thuê trong năm ${year}. Số tiền đã ghi nhận không đồng nghĩa với đã thanh toán; công nợ chỉ được xác định sau khi đối chiếu.</p>`:`<p class="soft-note">Chưa có dữ liệu tiền thuê trong năm ${year}. Có thể nhập bằng tệp JSON hoặc điền từng tháng; không tự suy đoán công nợ.</p>`}
+      ${yearly.length?`<p class="soft-note">Năm ${year} có ${yearly.length} kỳ thuê; đã xác nhận trả đủ ${confirmed.length} kỳ, tổng ${money(yearlyConfirmedTotal(year))}. Xác nhận trả đủ chỉ thay đổi công nợ, không tự tạo ngày thanh toán hay ghi chi tiền mặt.</p>`:`<p class="soft-note">Chưa có dữ liệu tiền thuê trong năm ${year}. Có thể nhập bằng tệp JSON hoặc điền từng tháng; không tự suy đoán công nợ.</p>`}
+      <div class="bulk-reconcile-panel"><div><strong>Đối chiếu thanh toán hàng loạt</strong><p>Đánh dấu các kỳ đã trả đủ mà không phát sinh chứng từ, ngày chuyển tiền hoặc hình thức thanh toán giả. Dữ liệu đang lưu trên iPhone của anh sẽ được giữ nguyên.</p><span>${confirmed.length}/${yearly.length} kỳ đã xác nhận · ${money(yearlyConfirmedTotal(year))}</span></div><button type="button" class="btn primary" data-action="bulk-reconcile">${icon('check',17)} Xác nhận nhiều tháng</button></div>
       <div class="split"><div class="panel"><div class="panel-head"><div><h2>Tiền thuê từng tháng · ${year}</h2><p>Nhấn Sửa để điều chỉnh số tiền và phần phân bổ</p></div><button class="btn primary small" data-action="edit-schedule" data-period="${p}">+ Ghi số tiền thuê</button></div>
-      <div class="rent-months">${months.map(m=>{const row=rentRow(m),exp=rentExpected(m),paid=rentPaid(m);return `<div class="rent-month-card ${m===p?'current':''}"><div class="rent-month-main"><div class="rent-month-name">${monthLabel(m)} ${row?.source.includes('Excel')?'<span class="tag green">Excel</span>':''}</div><div class="rent-month-sub">${row?`Hoàng ${compact(row.shares['Hoàng'])} · Đức ${compact(row.shares['Đức'])} · Tuấn ${compact(row.shares['Tuấn'])}`:'Chưa nhập dữ liệu tiền thuê'} </div>${row?.note?`<div class="rent-month-note">${esc(row.note)}</div>`:''}</div><div class="rent-month-right"><div class="rent-month-amount"><strong>${exp?money(exp):'—'}</strong><span>${exp?badge(...rentStatus(m)):'Không có số liệu'}</span></div><button class="btn outline small" data-action="edit-schedule" data-period="${m}">${row?'Sửa':'Nhập'}</button></div></div>`}).join('')}</div>
+      <div class="rent-months">${months.map(m=>{const row=rentRow(m),exp=rentExpected(m),paid=rentPaid(m);return `<div class="rent-month-card ${m===p?'current':''}"><div class="rent-month-main"><div class="rent-month-name">${monthLabel(m)} ${row?.source.includes('Excel')?'<span class="tag green">Excel</span>':''}</div><div class="rent-month-sub">${row?`Hoàng ${compact(row.shares['Hoàng'])} · Đức ${compact(row.shares['Đức'])} · Tuấn ${compact(row.shares['Tuấn'])}`:'Chưa nhập dữ liệu tiền thuê'} </div>${row?.note?`<div class="rent-month-note">${esc(row.note)}</div>`:''}</div><div class="rent-month-right"><div class="rent-month-amount"><strong>${exp?money(exp):'—'}</strong><span>${exp?badge(...rentStatus(m)):'Không có số liệu'}</span></div><div class="rent-card-actions"><button class="btn outline small" data-action="edit-schedule" data-period="${m}">${row?'Sửa':'Nhập'}</button>${rentFullConfirmed(m)?`<button class="btn subtle small" data-action="revoke-reconciliation" data-period="${m}">Bỏ xác nhận</button>`:''}</div></div></div>`}).join('')}</div>
       <div class="month-card-total"><span>Tổng số tiền thuê đã nhập (${year})</span><strong>${money(yearlyRent(year))}</strong></div>
       </div><div class="panel"><div class="panel-head"><div><h2>Chi tiết kỳ ${monthLabel(p)}</h2><p>Phần tiền thuê của từng người</p></div></div>
         ${assigned?`<div class="monthly-lines">${['Hoàng','Đức','Tuấn'].map(name=>`<div class="monthly-line"><span>${name}</span><strong>${money(assigned.shares[name])}</strong></div>`).join('')}<div class="monthly-line"><span><strong>Tổng tiền thuê</strong></span><strong>${money(assigned.amount)}</strong></div></div>`:empty('Chưa có số liệu thuê','Chọn một tháng có dữ liệu hoặc nhập mức thuê mới.','edit-schedule','Nhập tiền thuê')}
+        <div class="separator"></div><div class="monthly-lines"><div class="monthly-line"><span>Trạng thái đối chiếu</span><strong>${rentFullConfirmed(p)?'Đã xác nhận trả đủ':rentConfirmationStale(p)?'Cần xác nhận lại sau khi đổi số tiền':rentStatus(p)[0]}</strong></div>${rentFullConfirmed(p)?`<div class="monthly-line"><span>Khoản phải trả còn lại</span><strong class="positive-text">0 ₫</strong></div>`:''}</div>
+        ${rentFullConfirmed(p)?`<p class="data-note">Xác nhận thanh toán đủ ${money(rentExpected(p))}, không tạo giao dịch thực trả hoặc ngày/chuyển khoản. ${rentReconciliation(p)?.note?`Ghi chú: ${esc(rentReconciliation(p).note)}`:''}</p>`:''}
         <div class="separator"></div><div class="panel-head"><div><h2>Lịch sử trả tiền</h2><p>Chỉ ghi những khoản đã thực trả và có đối chiếu</p></div><button class="btn secondary small" data-action="new-rent" data-period="${p}">+ Trả tiền</button></div>
         ${ps.length?`<div class="table-wrap"><table class="list-table"><thead><tr><th>Ngày trả</th><th>Số tiền</th><th>Thao tác</th></tr></thead><tbody>${ps.map(x=>`<tr><td class="strong">${formatDate(x.date)}<span class="desc">${esc(x.method)}${x.note?' · '+esc(x.note):''}</span></td><td class="money">${money(x.amount)}</td><td><button class="icon-button" data-action="edit-rent" data-id="${esc(x.id)}">✎</button> <button class="icon-button delete" data-action="delete-rent" data-id="${esc(x.id)}">×</button></td></tr>`).join('')}</tbody></table></div>`:empty('Chưa có lần thanh toán được xác nhận','Tiền thuê ghi nhận không phải chứng từ đã trả.')}
         ${assigned?.note?`<div class="callout section-space"><strong>Ghi chú gốc trong Excel:</strong> ${esc(assigned.note)}</div>`:''}
         <div class="separator"></div><div class="monthly-lines"><div class="monthly-line"><span>Đã ghi nhận thực trả</span><strong class="positive-text">${money(rentPaid(p))}</strong></div><div class="monthly-line"><span>Còn nợ sau đối chiếu</span><strong>${due===null?'Chưa xác nhận':money(due)}</strong></div></div>
-        <p class="data-note">Tiền thuê ghi nhận và khoản thực trả là hai thông tin khác nhau. Chỉ khi đối chiếu thanh toán mới xác định chính xác công nợ.</p>
+        <p class="data-note">Lịch sử thực trả chỉ gồm giao dịch có ngày và số tiền thực trả. Xác nhận hàng loạt phản ánh công nợ đã quyết toán, không được cộng vào chi phí thực trả hoặc dòng tiền.</p>
       </div></div>`;
   }
   function expenseTable(list,small=false){
@@ -280,10 +311,11 @@
     const cashSpent=monthRentCash(p)+monthExpense(p);
     return `<div class="page-head"><div><h2>Báo cáo ${monthLabel(p)}</h2><p>Số liệu cập nhật từ các giao dịch đã ghi nhận</p></div><div class="report-buttons"><button class="btn outline small" data-action="print">${icon('print',15)} In / PDF</button><button class="btn secondary small" data-action="export-csv">${icon('download',15)} Xuất CSV</button></div></div>
       <div class="summary-strip"><div class="summary-chip"><span class="label">Tiền thuê ghi nhận năm ${p.slice(0,4)}</span><span class="value">${money(yearlyRent(p.slice(0,4)))}</span></div><div class="summary-chip"><span class="label">Hoàng (60%)</span><span class="value">${money(yearlyShare(p.slice(0,4),'Hoàng'))}</span></div><div class="summary-chip"><span class="label">Đức (30%)</span><span class="value">${money(yearlyShare(p.slice(0,4),'Đức'))}</span></div><div class="summary-chip"><span class="label">Tuấn (10%)</span><span class="value">${money(yearlyShare(p.slice(0,4),'Tuấn'))}</span></div></div>
+      <p class="soft-note">Tính đến hiện tại, đã xác nhận trả đủ ${yearlyConfirmedRows(p.slice(0,4)).length} kỳ thuê trong năm ${p.slice(0,4)}, giá trị ${money(yearlyConfirmedTotal(p.slice(0,4)))}. Đây là trạng thái đối chiếu, không thay thế ngày thực trả hoặc dữ liệu dòng tiền.</p>
       <div class="grid metrics">${statBox('Tiền đã thu',monthIncome(p),'Khoản thu thực tế','up','green')}${statBox('Tổng tiền đã chi',cashSpent,'Thuê + chi phí đã trả','down','orange')}${rentDue(p)===null?`<div class="metric"><div class="metric-title">Công nợ tiền thuê</div><div class="metric-val" style="font-size:18px">Chưa xác nhận</div><div class="metric-sub">Chưa có xác nhận thực trả</div></div>`:statBox('Công nợ tiền thuê',rentDue(p),'Sau khi đối chiếu thanh toán','clock','red')}${statBox('Dòng tiền thuần',monthNet(p),'Thu trừ chi thực tế','chart',monthNet(p)<0?'negative':'green')}</div>
       <div class="panel"><div class="panel-head"><div><h2>Tiền thuê ghi nhận và dòng tiền 6 tháng</h2><p>Tiền thuê là số phải ghi nhận; các cột thu, chi còn lại là giao dịch thực tế</p></div></div>${chart.html}</div>
       <div class="panel section-space"><div class="panel-head"><div><h2>Bảng tổng hợp 6 tháng</h2><p>Đơn vị: đồng Việt Nam</p></div></div><div class="table-wrap"><table class="list-table"><thead><tr><th>Tháng</th><th>Khoản thu</th><th>Tiền thuê ghi nhận</th><th>Chi phí đã trả</th><th>Thuần</th><th>Chi phí chưa trả</th></tr></thead><tbody>${chart.months.slice().reverse().map(m=>`<tr><td class="strong">${monthLabel(m)}</td><td>${money(monthIncome(m))}</td><td>${rentValue(m)}</td><td>${money(monthExpense(m))}</td><td class="strong ${monthNet(m)<0?'negative-text':'positive-text'}">${money(monthNet(m))}</td><td>${money(monthExpensePending(m))}</td></tr>`).join('')}</tbody></table></div>
-        <p class="data-note">Tiền thuê ghi nhận là số tiền trong sổ, không đồng nghĩa đã trả. Chi tiền thuê thực tế được tính theo ngày chuyển tiền; công nợ chỉ được xác định sau khi đối chiếu. Chi phí chưa trả chưa làm giảm dòng tiền thuần. Khi xuất CSV, hệ thống xuất toàn bộ dữ liệu chứ không chỉ tháng đang xem.</p>
+        <p class="data-note">Tiền thuê ghi nhận và trạng thái đã xác nhận trả đủ được theo dõi riêng với giao dịch thực trả. Chi tiền thuê thực tế chỉ được tính từ giao dịch có ngày; xác nhận hàng loạt không làm thay đổi dòng tiền. Khi xuất CSV, hệ thống xuất toàn bộ dữ liệu chứ không chỉ tháng đang xem.</p>
       </div><div class="insight">${icon('info',20)}<div><strong>Giải thích dòng tiền thuần</strong><p>Dòng tiền thuần = khoản thu đã nhận − tiền thuê đã trả − chi phí phát sinh đã thanh toán. Chỉ số này là dòng tiền vận hành đơn giản, không phải báo cáo lợi nhuận hoặc kê khai thuế.</p></div></div>`;
   }
   function settingsPage(){
@@ -303,7 +335,22 @@
   function selectField(label,name,choices,selected,full=false){return field(label,name,`<select id="f-${name}" name="${name}">${optionList(choices,selected)}</select>`,full);}
   function dateField(label,name,val=dateNow()){return field(label,name,`<input id="f-${name}" name="${name}" required type="date" value="${esc(val)}">`);}
   function noteField(val=''){return field('Ghi chú','note',`<textarea id="f-note" maxlength="1500" name="note" placeholder="Thông tin bổ sung (không bắt buộc)">${esc(val)}</textarea>`,true);}
-  function dialog(title,content,formId){dom.dialogRoot.innerHTML=`<div class="dialog-content"><div class="dialog-head"><div><div class="dialog-kicker">SUNWAVE POOL · SỔ QUỸ</div><h2 id="dialog-title">${title}</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Đóng">×</button></div><form id="${formId}">${content}<div class="dialog-actions"><button class="btn subtle" type="button" data-action="close-dialog">Hủy</button><button type="submit" class="btn primary">Lưu giao dịch</button></div></form></div>`;dom.dialog.showModal();const autofocus=dom.dialog.querySelector('input:not([type="hidden"])');if(autofocus)autofocus.focus();}
+  function dialog(title,content,formId,submitLabel='Lưu giao dịch'){dom.dialogRoot.innerHTML=`<div class="dialog-content"><div class="dialog-head"><div><div class="dialog-kicker">SUNWAVE POOL · SỔ QUỸ</div><h2 id="dialog-title">${title}</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Đóng">×</button></div><form id="${formId}">${content}<div class="dialog-actions"><button class="btn subtle" type="button" data-action="close-dialog">Hủy</button><button type="submit" class="btn primary">${esc(submitLabel)}</button></div></form></div>`;dom.dialog.showModal();const autofocus=dom.dialog.querySelector('input:not([type="hidden"])');if(autofocus)autofocus.focus();}
+  function editBulkReconciliation(){
+    const year=state.month.slice(0,4);
+    const rows=annualRows(year).filter(r=>num(r.amount)>0).sort((a,b)=>a.period.localeCompare(b.period));
+    if(!rows.length){toast('Năm đang chọn chưa có kỳ thuê để xác nhận.',true);return;}
+    const options=rows.map(r=>{
+      const already=rentFullConfirmed(r.period);
+      return `<label class="bulk-rent-row ${already?'is-done':''}"><input type="checkbox" name="period" value="${esc(r.period)}" ${already?'disabled':'checked'}><span><strong>${monthLabel(r.period)}</strong><small>${already?'Đã xác nhận trả đủ':rentConfirmationStale(r.period)?'Số tiền đã thay đổi, cần đối chiếu lại':'Chờ xác nhận'} · ${money(r.amount)}</small></span></label>`;
+    }).join('');
+    const body=`<p class="data-note">Chọn đúng các tháng đã trả đủ. Bản xác nhận chỉ lưu kỳ và số tiền được đối chiếu, <strong>không tạo ngày trả tiền, phương thức chuyển khoản hay giao dịch chi tiền.</strong></p><div class="bulk-rent-list">${options}</div><div class="field bulk-note"><label for="bulk-note">Ghi chú nguồn xác nhận (tùy chọn)</label><textarea id="bulk-note" name="note" maxlength="500" rows="2" placeholder="Ví dụ: Đã đối chiếu với sổ tiền thuê"></textarea></div><p class="data-note">Các kỳ đã xác nhận sẽ được giữ nguyên. Nếu số tiền kỳ thuê đổi, trạng thái sẽ yêu cầu xác nhận lại.</p>`;
+    dialog(`Đối chiếu nhiều tháng · ${year}`,body,'bulk-reconcile-form','Xác nhận các kỳ đã trả đủ');
+  }
+  function revokeReconciliation(period){
+    const item=rentReconciliation(period);if(!item)return;
+    confirmAction('Bỏ xác nhận trả đủ',`Bỏ trạng thái đã trả đủ của ${monthLabel(period)}? Các giao dịch thực trả và tiền thuê gốc vẫn được giữ nguyên.`,()=>{db.rentReconciliations=db.rentReconciliations.filter(r=>r.period!==period);persist();render();toast('Đã bỏ xác nhận, không xóa chứng từ thực trả.');});
+  }
   function editRent(id='',period=state.month){
     const r=db.rentPayments.find(x=>x.id===id)||{id:'',date:dateNow(),amount:rentVerified(period)?Math.max(0,rentDue(period)||0):0,period,method:'Chuyển khoản',note:''};
     const body=`<input type="hidden" name="id" value="${esc(r.id)}"><div class="form-grid">${field('Kỳ tiền thuê','period',`<input id="f-period" required name="period" type="month" value="${esc(r.period)}">`)}${dateField('Ngày thực trả','date',r.date)}${numberField('Số tiền đã trả (VNĐ)','amount',r.amount||'')}${selectField('Hình thức thanh toán','method',METHODS,r.method)}${noteField(r.note)}</div><p class="data-note">Ghi nhận được nhiều lần trả tiền cho cùng một kỳ, kể cả trả một phần. Ngày thực trả quyết định tháng dòng tiền.</p>`;
@@ -333,7 +380,7 @@
   function csvQuote(v){const raw=String(v??'');const safe=/^[\s]*[=+@]/.test(raw)?"'"+raw:raw;return `"${safe.replace(/"/g,'""')}"`;}
   function exportCSV(){
     const lines=[['Loại','Ngày giao dịch','Kỳ thuê','Nội dung','Danh mục','Số tiền (VND)','Trạng thái','Hình thức','Ghi chú','Hoàng (VND)','Đức (VND)','Tuấn (VND)','Nguồn','Người chi']];
-    db.rentSchedule.forEach(r=>lines.push(['Tiền thuê ghi nhận','',r.period,'Số tiền thuê theo tháng','Tiền thuê',r.amount,r.tracking==='unknown'?'Chưa đối chiếu':'Đang đối chiếu','',r.note,r.shares['Hoàng'],r.shares['Đức'],r.shares['Tuấn'],r.source,'']));
+    db.rentSchedule.forEach(r=>lines.push(['Tiền thuê ghi nhận','',r.period,'Số tiền thuê theo tháng','Tiền thuê',r.amount,rentFullConfirmed(r.period)?'Đã xác nhận trả đủ (không ghi ngày thực trả)':rentConfirmationStale(r.period)?'Cần đối chiếu lại số tiền':r.tracking==='unknown'?'Chưa đối chiếu':'Đang đối chiếu','',[r.note,rentReconciliation(r.period)?.note].filter(Boolean).join(' · '),r.shares['Hoàng'],r.shares['Đức'],r.shares['Tuấn'],r.source,'']));
     db.rentPayments.forEach(r=>lines.push(['Chi tiền thuê',r.date,r.period,'Trả tiền thuê hồ bơi','Tiền thuê',r.amount,'Đã thanh toán',r.method,r.note,'','','','','']));
     db.expenses.forEach(r=>lines.push(['Chi phát sinh',r.date,'',r.title,r.category,r.amount,r.paid?'Đã thanh toán':'Chưa thanh toán',r.method,r.note,'','','','',r.payer||'Quỹ hồ bơi']));
     db.income.forEach(r=>lines.push(['Khoản thu',r.date,'',r.title,r.category,r.amount,'Đã thu',r.method,r.note,'','','','','']));
@@ -347,6 +394,8 @@
     switch(action){
       case 'nav':goTab(node.dataset.tab);break;
       case 'edit-schedule':editSchedule(node.dataset.period||state.month);break;
+      case 'bulk-reconcile':editBulkReconciliation();break;
+      case 'revoke-reconciliation':revokeReconciliation(node.dataset.period);break;
       case 'split-schedule':{
         const total=num(document.getElementById('f-amount')?.value);
         const hoang=Math.round(total*0.6),duc=Math.round(total*0.3),tuan=total-hoang-duc;
@@ -355,7 +404,7 @@
       }
       case 'delete-schedule':{
         const r=db.rentSchedule.find(x=>x.id===id);if(!r)break;
-        dom.dialog.close();confirmAction('Xóa số tiền thuê',`Xóa tiền thuê kỳ ${monthLabel(r.period)}? Các giao dịch thực trả (nếu có) vẫn được lưu và cần kiểm tra.`,()=>{db.rentSchedule=db.rentSchedule.filter(x=>x.id!==id);persist();render();toast('Đã xóa số tiền thuê của kỳ.');});break;
+        dom.dialog.close();confirmAction('Xóa số tiền thuê',`Xóa tiền thuê kỳ ${monthLabel(r.period)}? Các giao dịch thực trả (nếu có) vẫn được lưu và cần kiểm tra.`,()=>{db.rentSchedule=db.rentSchedule.filter(x=>x.id!==id);db.rentReconciliations=db.rentReconciliations.filter(x=>x.period!==r.period);persist();render();toast('Đã xóa số tiền thuê của kỳ.');});break;
       }
       case 'new-rent':editRent('',node.dataset.period||state.month);break;
       case 'edit-rent':editRent(id);break;
@@ -377,9 +426,21 @@
     }
   });
   document.addEventListener('submit',ev=>{
-    const form=ev.target, formId=form.getAttribute('id');if(!['settings-form','rent-form','expense-form','income-form','schedule-form'].includes(formId))return;
+    const form=ev.target, formId=form.getAttribute('id');if(!['settings-form','rent-form','expense-form','income-form','schedule-form','bulk-reconcile-form'].includes(formId))return;
     ev.preventDefault();if(!form.reportValidity())return;
     const f=new FormData(form),get=n=>String(f.get(n)||'').trim();
+    if(formId==='bulk-reconcile-form'){
+      const year=state.month.slice(0,4);
+      const periods=[...new Set(f.getAll('period').map(String))].filter(p=>validPeriod(p)&&p.startsWith(year+'-')&&!!rentRow(p)&&!rentFullConfirmed(p));
+      if(!periods.length){toast('Hãy chọn ít nhất một kỳ chưa xác nhận.',true);return;}
+      const total=periods.reduce((a,p)=>a+rentExpected(p),0),note=get('note').slice(0,500);
+      dom.dialog.close();
+      confirmAction('Xác nhận đã thanh toán đủ',`Xác nhận ${periods.length} tháng, tổng ${money(total)} đã thanh toán đủ? Chỉ đổi trạng thái công nợ; KHÔNG ghi ngày, phương thức hoặc tạo giao dịch chi tiền.`,()=>{
+        for(const period of periods){const amount=rentExpected(period);db.rentReconciliations=db.rentReconciliations.filter(r=>r.period!==period);db.rentReconciliations.push({period,status:'paid',amountConfirmed:amount,note});}
+        persist();render();toast(`Đã xác nhận trả đủ ${periods.length} kỳ · ${money(total)}.`);
+      });
+      return;
+    }
     if(formId==='settings-form'){
       const rent=num(get('monthlyRent')),due=num(get('rentDueDay')),start=get('rentStart');
       if(rent<0||!Number.isInteger(due)||due<0||due>28||!validPeriod(start)){toast('Vui lòng kiểm tra thông tin hợp đồng thuê.',true);return;}
@@ -393,6 +454,7 @@
       if(db.rentSchedule.some(r=>r.period===period&&r.id!==id)){toast('Tháng này đã có tiền thuê. Hãy sửa bản ghi hiện có.',true);return;}
       const old=db.rentSchedule.find(r=>r.id===id);
       const item={id:id||uid(),period,amount,shares,note:get('note'),source:old?.source||'Nhập thủ công',tracking:get('tracking')==='Đã bắt đầu đối chiếu công nợ'?'tracked':'unknown'};
+      if(old && old.period!==period)db.rentReconciliations=db.rentReconciliations.filter(r=>r.period!==old.period);
       db.rentSchedule=id?db.rentSchedule.map(r=>r.id===id?item:r):[...db.rentSchedule,item];
       persist();dom.dialog.close();render();toast(id?'Đã cập nhật số tiền thuê.':'Đã thêm tiền thuê mới.');return;
     }
@@ -424,7 +486,7 @@
   dom.backupInput.addEventListener('change',async ev=>{
     const file=ev.target.files?.[0];if(!file)return;
     try{if(file.size>8*1024*1024)throw new Error('File quá lớn. Giới hạn 8 MB.');const content=await file.text();const restored=normalize(JSON.parse(content));
-      confirmAction('Khôi phục bản sao lưu',`Nhập ${restored.rentSchedule.length} kỳ thuê, ${restored.rentPayments.length} lần trả thuê, ${restored.expenses.length} khoản chi và ${restored.income.length} khoản thu? Dữ liệu hiện tại sẽ bị thay thế.`,()=>{db=restored;const latest=db.rentSchedule.map(r=>r.period).sort().at(-1);if(latest){state.month=latest;try{localStorage.setItem(KEY+'-ui-month',latest)}catch(e){}}persist();goTab('overview');toast('Đã khôi phục dữ liệu thành công.');});
+      confirmAction('Khôi phục bản sao lưu',`Nhập ${restored.rentSchedule.length} kỳ thuê, ${restored.rentReconciliations.length} xác nhận trả đủ, ${restored.rentPayments.length} lần trả thuê, ${restored.expenses.length} khoản chi và ${restored.income.length} khoản thu? Dữ liệu hiện tại sẽ bị thay thế.`,()=>{db=restored;const latest=db.rentSchedule.map(r=>r.period).sort().at(-1);if(latest){state.month=latest;try{localStorage.setItem(KEY+'-ui-month',latest)}catch(e){}}persist();goTab('overview');toast('Đã khôi phục dữ liệu thành công.');});
     }catch(err){toast('Không thể nhập tệp: '+err.message,true);}finally{dom.backupInput.value='';}
   });
   window.addEventListener('hashchange',()=>{const tab=location.hash.replace('#','');if(NAV.some(n=>n[0]===tab)&&state.tab!==tab){state.tab=tab;render();}});
