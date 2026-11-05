@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#075a78">
+  <meta name="description" content="Ứng dụng quản lý tiền thuê hồ bơi, chi phí phát sinh, khoản thu và dòng tiền Sunwave Pool.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sunwave Sổ Quỹ">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20192%20192%22%3E%0A%20%20%3Crect%20width%3D%22192%22%20height%3D%22192%22%20rx%3D%2242%22%20fill%3D%22%23075a78%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%22140%22%20cy%3D%2255%22%20r%3D%2222%22%20fill%3D%22%23ffdb8f%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%20100q24-20%2048%200t48%200t48%200%22%20fill%3D%22none%22%20stroke%3D%22%2390edf1%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M24%20132q24-20%2048%200t48%200t48%200%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3C%2Fsvg%3E%0A" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAFE0lEQVR4nO2cQU7kMBBFYTQS3GDuBtdAolmNZgVIXIPDzQ1YzqKlCE3yu+2qssuJ31u2OvVt81KGhOT27uF0A7DFj+wBwLggB0iQAyTIARLkAAlygAQ5QIIcIEEOkCAHSJADJMgBEuQACXKABDlAghwgQQ6QIAdIkAMkyAES5AAJcoAEOUCCHCBBDpAgB0iQAyTIARLkAMnP7AFABV9/fm1+fv/7b4s45NgByon1F2ItQY6huarF5vejFEGOQanVYn2sXxF+IR0RjxmBRZBjOELMCCmFHGMRaIa/IHIMRLgZzrLIMQqNzPAURw6QIMcQNG0b5gjkAAly5NOhbdiCkAMkyAES5Eim255iiEMOkCAHSJADJMgBEuQACXKABDlAghzJNHqqICQOOUCCHCBBjny67Sy1QcgBEuQYgg7NwxCBHCBBjlFo2jxsxZFjIBr5YS6LHGMR7oenIHIMR6AfzlLIMSIhfviL8H6OQTn/aG3/YcrLW6agVhFe+zQdy4+cF8aBpPP9fX4hBQlygAQ5QIIcIEEOkCAHSJADJGNd53h7f1p/eHr+ID2F27uHU2L8dzZXZ6H1Ms2crsiX4/K6/Ef4Ms2cfpWd/c5RtZqkO8nsHObZhpxDM6cXsrPOcWa2MzgrPU0O5yQ5vAM5coRMz1xk5vQqdrmtQB8S5Ai03lBq5vRaessRPqWqgjOnG2BbAUlXORqZXlh25nQbMXKED/H0/JF4z2lf6e38CJDjPLirQyyfw7I05Ws0c3o7vHIs0z49f1xYgrf3p5LZbn6n8MBp02+aNQ/XvZX1mNRkDKdOyLGke7B3js1xl3+4iefsIb3wm+UY5VBDWTfYwqYawlHT/VubjeptpWQE3ycT1RhtdWZO99PkOscymcJZxU7peOlZm0td52j3J3XJ/ElvUfkCdZ2j0f5dWJb0znBvBSTVcoQrXFWQ9CqcW6GlcwSukaEU6VV4/GBbOT5mP4xydLu2Q3rIgTY/7J3DuUYc3vlwgx8520ru/ehp02v9CHjirTay0RVJ0sPTe3eOac/aPaZHPis781sMDpke/CC18w0kX5+v6w/vH19Ib52+Sf77ORY2V2ehfJlIjyJfjsvr8h/hyzRz+lV2doW0ajVJd5LZOcyzDTmHZk4vZGed48xsZ3BWepoczklyeAdy5AiZnrnIzOlV7HJbgT4kyBFovaHUzOm19JYjfEpVBWdON8C2ApKucjQyvbDszOk2YuQIH+L940vWDYXdpbfzI0CO8+CuDrF8DsvSlK/RzOnt8MqxTPv+8eXCEnx9vpbMdvM7hQdOm37TrHm47q2sx6QmYzh1Qo4l3YO9c2yOu/zDTTxnD+mF3yzHKIcayrrBFjbVEI6a7t/abFRvKyUj+D6ZqMZoqzNzup8m1zmWyRTOKnZKx0vP2lzqOke7P6lL5k96i8oXqOscjfbvwrKkd4Z7KyCpliNc4aqCpFfh3AotnSNwjQylSK/C4wfbyvEx+2GUo9u1HdJDDrT5Ye8czjXi8M6HG/zI2VZy70dPm17rR8ATb7WRja5Ikh6e3rtzTHvW7jE98lnZmd9icMj04AepnW8gIX2o9Pz3c8CwcBEMJMgBEuQACXKABDlAghwgQQ6QIAdIkAMkyAES5AAJcoAEOUCCHCBBDpAgB0iQAyTIARLkAAlygAQ5QIIcIEEOkCAHSJADJMgBEuQACXKABDlAghwgQQ6QIAdIkAMkyAES5AAJcoDkH43KTqaYa0CSAAAAAElFTkSuQmCC">
+  <style>
+:root {font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; color:#152f43; background:#f4f7fb; font-synthesis:none; -webkit-font-smoothing:antialiased; --navy:#0b334b;--blue:#075a78;--aqua:#0f95a9;--mint:#e6f8f5;--surface:#fff;--line:#e5edf2;--muted:#6f8593;--red:#cf4c55;--orange:#cd8525;--green:#12836b;--shadow:0 9px 32px rgba(19,57,80,.045)}
+*{box-sizing:border-box}body{margin:0;min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #7cd9e5;outline-offset:2px}input,select,textarea{accent-color:var(--aqua)}.app-shell{min-height:100vh;display:flex}.sidebar{background:#073a53;color:white;width:256px;flex:0 0 256px;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;height:100vh;padding:27px 17px 22px}.brand{display:flex;align-items:center;gap:12px;padding:3px 9px 45px}.brand-mark{width:48px;height:48px;background:#0f96ac;border-radius:15px;display:grid;place-items:center;flex-shrink:0;box-shadow:0 7px 18px #00324966}.brand strong{display:block;font-size:18px;letter-spacing:-.4px}.brand span{font-size:9px;font-weight:800;color:#a5c9d5;letter-spacing:1.6px}.nav-label{font-size:10px;font-weight:800;letter-spacing:1.7px;color:#80a7ba;padding:0 17px 13px}.nav{display:grid;gap:6px}.nav-link{border:0;background:transparent;color:#b4d1dd;text-align:left;display:flex;align-items:center;gap:13px;width:100%;padding:13px 14px;border-radius:12px;font-weight:650;font-size:14px}.nav-link:hover{background:#11516b}.nav-link.active{background:#0a7189;color:#fff;box-shadow:inset 3px 0 #58d2df}.nav-link svg{flex-shrink:0}.sidebar-bottom{margin-top:auto}.protect-card{background:#125069;border:1px solid #34728a;border-radius:15px;padding:15px;display:flex;gap:10px}.protect-card strong{font-size:12px}.protect-card p{margin:5px 0 0;color:#bed8e0;font-size:11px;line-height:1.55}.protect-icon{font-size:20px;color:#88e5e6}.sidebar-foot{padding-top:22px;color:#80a9b8;text-align:center;font-weight:700;letter-spacing:1px;font-size:10px}.main{min-width:0;flex:1;display:flex;flex-direction:column}.topbar{display:flex;align-items:center;justify-content:space-between;gap:24px;background:#fff;min-height:125px;padding:22px clamp(22px,3vw,50px);border-bottom:1px solid #eaf0f3}.eyebrow{font-size:10px;color:#1c91a4;font-weight:850;letter-spacing:1.55px;margin-bottom:6px}h1{font-size:27px;margin:0;line-height:1.2;letter-spacing:-.6px;color:#14394e}h2{font-size:19px;letter-spacing:-.4px;line-height:1.2;margin:0}h3{font-size:15px;line-height:1.35;margin:0}.topbar p{font-size:12px;color:var(--muted);margin:6px 0 0}.topbar-right{display:flex;align-items:center;gap:12px}.month-selector{border:1px solid #e0e9ef;display:flex;align-items:center;gap:9px;padding:0 12px;background:#f9fbfc;border-radius:11px;min-height:43px}.month-selector svg{color:#7891a0}.month-selector input{color:#325064;width:136px;border:0;outline:0;background:transparent;font-size:13px;font-weight:700;min-height:41px}.btn{border:1px solid transparent;border-radius:11px;padding:11px 16px;min-height:42px;display:inline-flex;align-items:center;gap:8px;justify-content:center;font-size:13px;font-weight:780;transition:filter .1s,transform .1s;text-decoration:none;white-space:nowrap}.btn:hover{filter:brightness(.975)}.btn:active{transform:scale(.987)}.btn.primary{background:var(--aqua);color:white}.btn.secondary{background:#e8f6fa;color:#087086;border-color:#d4eff3}.btn.subtle{background:#f1f5f8;color:#486171;border-color:#e7edf0}.btn.danger{background:#c94d58;color:white}.btn.outline{background:#fff;border:1px solid #dde9ee;color:#34586b}.btn.small{font-size:12px;padding:8px 11px;min-height:33px;border-radius:9px}.plus-glyph{font-size:20px;line-height:12px;font-weight:500}.mobile-brand,.mobile-nav{display:none}.content{width:100%;padding:30px clamp(22px,3vw,50px) 45px;max-width:1720px;margin:0 auto;flex:1}.footer{padding:16px clamp(22px,3vw,50px) 22px;display:flex;justify-content:space-between;font-size:11px;color:#91a1ac}.grid{display:grid;gap:17px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}.metric{background:white;padding:23px 21px;border-radius:17px;border:1px solid var(--line);box-shadow:var(--shadow);min-height:146px;position:relative;overflow:hidden}.metric .metric-title{font-size:12px;color:#708998;font-weight:700;margin-top:2px}.metric .metric-val{font-size:clamp(21px,2.15vw,29px);font-weight:850;letter-spacing:-.9px;color:#143c50;margin:16px 0 8px;white-space:nowrap}.metric .metric-sub{font-size:11px;color:#879ba7}.metric .metric-badge{float:right;border-radius:11px;display:grid;place-items:center;width:37px;height:37px;background:#e7f8fa;color:#128da1}.metric.green .metric-badge{background:#e8f8f1;color:#169372}.metric.orange .metric-badge{background:#fff4e6;color:#d18c3d}.metric.red .metric-badge{background:#fff0ef;color:#cb6a64}.metric.green .metric-val{color:#107963}.metric.negative .metric-val{color:#c54f56}.split{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);gap:19px}.panel{background:white;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:22px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}.panel-head p{margin:6px 0 0;color:var(--muted);font-size:12px}.panel-body{min-width:0}.link-button{background:none;border:0;color:#05899d;font-size:12px;font-weight:800;padding:7px 1px;white-space:nowrap}.section-space{margin-top:20px}.rent-highlight{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;background:linear-gradient(112deg,#e6f7f9,#f3fbfa);border:1px solid #d3f0f1;padding:19px;border-radius:13px;margin-bottom:18px}.rent-highlight strong{font-size:25px;letter-spacing:-.6px;display:block;margin:4px 0}.rent-highlight small{font-size:11px;color:#6d8b9d}.rent-highlight .mini-pill{background:#fff;color:#077f8c;font-size:11px;border-radius:50px;padding:7px 10px;font-weight:750}.progress{height:11px;background:#e6eef2;border-radius:50px;overflow:hidden;margin:12px 0}.progress>span{height:100%;display:block;background:linear-gradient(90deg,#10a6b4,#38c9a0);border-radius:50px}.stats-row{display:flex;justify-content:space-between;gap:12px;color:#668092;font-size:12px}.stats-row strong{color:#28485a;font-size:13px}.status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:750;border-radius:100px;padding:5px 9px;white-space:nowrap}.status:before{content:'';width:6px;height:6px;background:currentColor;border-radius:50%}.status.paid{background:#e6f7ef;color:#138368}.status.due{background:#fff3e1;color:#ad7424}.status.overdue{background:#ffeaeb;color:#bd4451}.status.future{background:#e9f2fc;color:#567da7}.status.config{background:#edf2f5;color:#6a8392}.list-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}.list-table th{font-size:10px;letter-spacing:.4px;color:#8fa2af;font-weight:800;padding:12px 9px;border-bottom:1px solid #edf2f5;text-transform:uppercase}.list-table td{padding:13px 9px;border-bottom:1px solid #edf2f5;color:#486477;vertical-align:middle}.list-table tbody tr:last-child td{border-bottom:0}.list-table .strong{color:#1c4055;font-weight:800}.list-table .money{color:#23495b;font-weight:800;white-space:nowrap}.list-table .desc{display:block;font-size:11px;color:#8ba0ae;margin-top:4px;font-weight:500}.list-table .actions{text-align:right;white-space:nowrap}.table-wrap{width:100%;overflow-x:auto}.icon-button{border:0;border-radius:9px;background:#f0f6f8;color:#3b697c;min-width:31px;height:31px;display:inline-flex;justify-content:center;align-items:center;font-size:16px;padding:0 8px}.icon-button:hover{background:#e2edf1}.icon-button.delete{color:#b34d57;background:#fff1f1}.icon-button.delete:hover{background:#ffe3e5}.empty{padding:32px 14px;text-align:center;color:#708999}.empty .empty-icon{margin:auto auto 12px;width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:#edf7f8;font-size:23px;color:#0f8f9d}.empty strong{display:block;color:#35566a;font-size:14px;margin-bottom:6px}.empty p{font-size:12px;line-height:1.65;margin:0 auto 14px;max-width:310px}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap}.toolbar-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.search-input{border:1px solid #e0eaf0;background:white;border-radius:10px;min-height:41px;padding:10px 13px;color:#315264;min-width:220px;max-width:100%}.filter-select{min-height:42px;background:white;border:1px solid #e1ebef;border-radius:10px;padding:7px 11px;color:#49677b;font-size:12px}.summary-strip{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}.summary-chip{background:#fff;border:1px solid #e4edf2;border-radius:12px;min-width:170px;padding:15px 17px;flex:1}.summary-chip .label{color:#76909e;font-size:11px;font-weight:700}.summary-chip .value{font-weight:850;font-size:19px;letter-spacing:-.35px;display:block;margin-top:7px;color:#204356}.summary-chip.alert .value{color:#d0585d}.summary-chip.good .value{color:#0c8d77}.rent-months{display:grid;gap:11px}.rent-month-card{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #e8eff2;border-radius:13px;padding:17px 18px}.rent-month-card.current{border-color:#8ccfdb;background:#f5fcfd}.rent-month-name{font-weight:850;font-size:14px}.rent-month-sub{margin-top:7px;font-size:11px;color:#849ba9}.rent-month-right{display:flex;align-items:center;gap:17px}.rent-month-amount{text-align:right}.rent-month-amount strong{display:block;font-size:14px}.rent-month-amount span{display:block;font-size:11px;color:#8ca0ac;margin-top:4px}.muted{color:#8298a7}.soft-note{background:#ecf8f8;border-left:3px solid #20a4b0;padding:12px 16px;border-radius:0 9px 9px 0;color:#507a89;font-size:12px;line-height:1.7;margin:0 0 18px}.tag{background:#edf6f9;color:#47748a;border-radius:7px;padding:5px 8px;font-size:11px;font-weight:750;display:inline-block}.tag.orange{background:#fff3e5;color:#b97d39}.tag.purple{background:#f1effc;color:#7b71b6}.tag.green{background:#eaf7ed;color:#2d9477}.tag.gray{background:#f1f3f5;color:#718694}.legend{display:flex;align-items:center;gap:15px;flex-wrap:wrap}.legend span{display:flex;gap:6px;align-items:center;color:#718a99;font-size:11px}.legend i{width:9px;height:9px;border-radius:3px;background:#0aa1b5}.legend .l2{background:#f2b65e}.legend .l3{background:#8796bb}.chart{display:flex;align-items:end;justify-content:space-around;gap:10px;height:219px;padding:16px 7px 0;border-bottom:1px solid #e6edf2}.chart-col{height:100%;display:flex;align-items:end;justify-content:end;flex-direction:column;gap:8px;flex:1;min-width:0}.chart-bars{width:100%;display:flex;justify-content:center;gap:4px;align-items:end;flex:1;min-height:0}.chart-bar{width:clamp(9px,1.4vw,22px);min-height:0;border-radius:6px 6px 0 0;transition:height .2s}.chart-bar.income{background:#0aa1b5}.chart-bar.rent{background:#f2b65e}.chart-bar.expense{background:#8796bb}.chart-month{font-size:11px;font-weight:750;color:#8297a5;white-space:nowrap;padding-bottom:10px}.bar-line{display:flex;gap:10px;align-items:center;margin:12px 0}.bar-line .bar-label{width:115px;font-size:12px;color:#668294;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bar-line .bar-track{flex:1;height:10px;background:#eaf1f5;border-radius:20px;overflow:hidden}.bar-line .bar-track span{display:block;height:100%;border-radius:20px;background:#11a2b4}.bar-line strong{min-width:110px;text-align:right;font-size:12px;color:#2b5061}.insight{display:flex;align-items:flex-start;gap:12px;background:#f2f9fb;border-radius:12px;padding:17px;margin-top:20px;color:#4b758a}.insight strong{font-size:12px;color:#28677a}.insight p{font-size:12px;line-height:1.55;margin:4px 0 0}.settings-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(270px,1fr);gap:19px;align-items:start}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.form-grid .full{grid-column:1/-1}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field label{font-size:12px;font-weight:750;color:#476477}.field input,.field select,.field textarea{border:1px solid #dfe8ee;background:#fbfcfd;border-radius:10px;min-height:43px;padding:10px 12px;color:#193c4e;outline:none;width:100%;font-size:13px}.field textarea{min-height:88px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#37b6c5;box-shadow:0 0 0 3px #10a4b41a}.field-hint{font-size:11px;color:#89a0af;margin-top:2px}.settings-card{border:1px solid #e4eef2;border-radius:12px;padding:16px;margin-top:12px}.settings-card h3{margin-bottom:6px}.settings-card p{color:#78919f;line-height:1.65;font-size:12px;margin:5px 0 13px}.settings-card-actions{display:flex;gap:8px;flex-wrap:wrap}.note-box{border-radius:12px;background:#f7fafb;padding:15px;color:#617c8b;font-size:12px;line-height:1.7}.intro{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}.intro p{margin:5px 0 0;color:#7e95a3;font-size:12px}.editor-dialog,.confirm-dialog{border:0;padding:0;border-radius:19px;background:white;box-shadow:0 25px 100px #05344740;max-height:min(92vh,900px);color:#18384b}.editor-dialog{width:min(560px,calc(100vw - 26px))}.confirm-dialog{width:min(420px,calc(100vw - 26px));padding:24px}.editor-dialog::backdrop,.confirm-dialog::backdrop{background:#07273884;backdrop-filter:blur(3px)}.dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:18px}.dialog-head .icon-button{font-size:23px}.dialog-kicker{color:#14a0ae;font-size:10px;font-weight:850;letter-spacing:1.4px;margin-bottom:7px}.dialog-content{padding:25px 27px 27px}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:23px;flex-wrap:wrap}.confirm-dialog>p{line-height:1.7;font-size:13px;color:#557080}.separator{height:1px;background:#eaf0f3;margin:18px 0}.monthly-lines{display:grid;gap:12px}.monthly-line{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid #eef2f5;padding-bottom:12px;font-size:13px}.monthly-line:last-child{border:0}.monthly-line strong{font-size:14px}.callout{background:#fff8ed;padding:12px 15px;border-radius:10px;border:1px solid #ffe8c5;font-size:12px;line-height:1.6;color:#8a652c}.toast{position:fixed;bottom:25px;right:25px;z-index:100;border-radius:12px;padding:12px 17px;color:white;background:#123e52;box-shadow:0 12px 35px #15384d2b;font-size:13px;font-weight:700;opacity:0;transform:translateY(13px);pointer-events:none;transition:opacity .2s,transform .2s;max-width:min(90vw,390px)}.toast.show{opacity:1;transform:translateY(0)}.toast.error{background:#a93e49}.hint-banner{margin-bottom:20px;padding:18px 20px;background:linear-gradient(110deg,#e3f5f8,#f4fbfa);border:1px solid #cfeaec;border-radius:13px;display:flex;justify-content:space-between;align-items:center;gap:16px}.hint-banner strong{display:block;font-size:13px;margin-bottom:4px;color:#17687a}.hint-banner p{color:#628696;font-size:12px;margin:0;line-height:1.5}.tiny{font-size:11px;color:#829ba7}.warning-text{color:#bd4550!important}.positive-text{color:#0a866e!important}.negative-text{color:#bd535d!important}.month-card-total{display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid #eaf0f2;margin-top:13px;color:#5f7c8c;font-size:12px}.month-card-total strong{color:#173f51;font-size:14px}.page-head{margin-bottom:19px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.page-head h2{font-size:19px}.page-head p{font-size:12px;color:#8da0ab;margin:6px 0 0}.inline-icon{display:inline-flex;vertical-align:middle}.pill-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.data-note{font-size:11px;color:#8fa3ae;line-height:1.65;margin-top:12px}.table-amount-right{text-align:right}.report-buttons{display:flex;gap:9px;flex-wrap:wrap}.mild-box{padding:17px;border:1px dashed #c4e0e7;border-radius:13px;background:#fbfeff;font-size:12px;color:#5a7b8d}.monthly-report-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.notice{color:#b34b56;font-size:12px;margin-top:10px;line-height:1.6}
+@media(max-width:1180px){.sidebar{width:214px;flex-basis:214px}.brand{padding-left:4px;gap:8px}.brand strong{font-size:16px}.brand-mark{width:41px;height:41px}.metrics{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}.settings-grid{grid-template-columns:1fr}.chart{height:185px}}
+@media(max-width:760px){.app-shell{display:block}.sidebar{display:none}.topbar{padding:14px 17px 17px;display:block;min-height:auto}.mobile-brand{display:flex;align-items:center;gap:9px;margin-bottom:17px}.mobile-brand strong{font-size:16px;color:#123b51}.mini-logo{background:#0f9bab;color:white;font-size:24px;width:31px;height:31px;line-height:31px;text-align:center;border-radius:10px;font-weight:800}.topbar-left .eyebrow{font-size:9px}.topbar-left h1{font-size:24px}.topbar-left p{font-size:11px}.topbar-right{position:absolute;right:17px;top:57px;gap:8px}.topbar{position:relative;min-height:137px}.month-selector{padding:0 6px;min-height:35px}.month-selector input{font-size:11px;width:107px;min-height:35px}.month-selector svg{display:none}.top-action{min-height:36px;padding:6px 10px;font-size:11px}.top-action .plus-glyph{font-size:16px}.mobile-nav{display:flex;overflow-x:auto;gap:8px;padding:12px 15px;background:#fff;border-bottom:1px solid #e4edf0;scrollbar-width:none;position:sticky;top:0;z-index:15}.mobile-nav::-webkit-scrollbar{display:none}.mobile-nav .nav-link{display:flex;width:auto;white-space:nowrap;border:1px solid #e3edf0;background:#f8fbfc;color:#6d8796;font-size:11px;padding:8px 11px;border-radius:9px;gap:6px}.mobile-nav .nav-link svg{width:15px;height:15px}.mobile-nav .nav-link.active{background:#0a869c;color:#fff;border-color:#0a869c;box-shadow:none}.content{padding:18px 14px 32px}.metrics{gap:10px;margin-bottom:13px}.metric{padding:17px 14px;min-height:123px;border-radius:13px}.metric .metric-title{font-size:10px}.metric .metric-badge{width:29px;height:29px;border-radius:9px}.metric .metric-badge svg{width:17px;height:17px}.metric .metric-val{font-size:clamp(17px,5.2vw,24px);margin:14px 0 8px}.metric .metric-sub{font-size:10px;line-height:1.5}.panel{padding:17px 15px;border-radius:14px}.panel-head{align-items:flex-start}.panel-head h2{font-size:16px}.panel-head p{font-size:11px}.split{gap:13px}.section-space{margin-top:13px}.footer{padding:9px 16px 23px;gap:8px;flex-wrap:wrap}.toolbar{align-items:stretch}.toolbar-actions{width:100%}.search-input{min-width:100%;width:100%}.rent-month-card{padding:14px 11px;gap:6px;flex-wrap:wrap}.rent-month-right{gap:7px;margin-left:auto}.rent-month-amount strong{font-size:12px}.rent-month-amount span{font-size:10px}.rent-month-name{font-size:12px}.rent-month-sub{font-size:10px}.rent-month-card .btn{font-size:10px;min-height:30px;padding:6px 9px}.list-table{font-size:11px}.list-table td{padding:12px 7px}.list-table th{padding:10px 7px;font-size:9px}.hide-mobile{display:none}.summary-strip{gap:9px}.summary-chip{padding:12px;min-width:calc(50% - 9px)}.summary-chip .value{font-size:16px}.settings-grid{gap:13px}.chart{height:172px}.chart-bar{width:10px}.chart-month{font-size:10px}.intro{align-items:flex-start}.hint-banner{align-items:flex-start;flex-direction:column}.monthly-report-grid{grid-template-columns:1fr}.dialog-content{padding:20px 18px}.editor-dialog{max-height:92dvh}.form-grid{gap:12px}.field input,.field select{min-height:42px;font-size:13px}.metric .metric-badge{display:none}.metric .metric-title{font-size:11px}.rent-highlight{padding:13px}.rent-highlight strong{font-size:21px}}
+@media(max-width:390px){.topbar-right{top:57px}.top-action span:last-child{display:none}.top-action{min-width:35px}.metric .metric-val{font-size:17px}.rent-month-card .status{font-size:9px;padding:4px 7px}.rent-month-name{font-size:11px}.rent-month-right{gap:6px}}
+@media print{body{background:white}.sidebar,.mobile-nav,.topbar-right,.toolbar,.page-head .report-buttons,.footer,.btn,.icon-button,.link-button,.hint-banner{display:none!important}.topbar{min-height:auto;padding:10px 15px}.content{padding:10px 15px}.panel,.metric{box-shadow:none;break-inside:avoid}.metrics{grid-template-columns:repeat(4,1fr)}.split{grid-template-columns:1fr 1fr}}
+
+/* Imported rent ledger: source tracking and yearly split */
+.import-summary{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:22px;padding:23px 25px;margin-bottom:20px;background:linear-gradient(110deg,#0a5871,#0b8795);border-radius:17px;color:#fff;box-shadow:0 9px 25px rgba(7,90,120,.13)}
+.import-kicker{font-size:11px;font-weight:850;letter-spacing:1.2px;color:#c4eef3}
+.import-total{font-size:clamp(26px,3.2vw,38px);font-weight:850;letter-spacing:-1px;margin:9px 0 6px}
+.import-desc{font-size:11px;line-height:1.6;color:#d4eff3;max-width:440px}
+.import-shares{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.import-shares span{display:flex;flex-direction:column;gap:6px;padding:11px 15px;border-radius:11px;background:rgba(255,255,255,.13);font-size:11px;color:#d3f3f5}
+.import-shares strong{font-size:15px;color:#fff;white-space:nowrap}
+.rent-month-main{min-width:0;flex:1}
+.rent-month-note{font-size:11px;line-height:1.5;color:#6e8695;margin-top:8px;max-width:530px}
+.rent-month-name .tag{margin-left:5px;font-size:9px;padding:3px 5px}
+.rent-month-amount .status{font-size:10px;padding:4px 7px;margin-top:5px}
+@media(max-width:760px){.import-summary{padding:19px}.import-shares{width:100%;gap:7px}.import-shares span{flex:1;min-width:85px;padding:10px}.import-shares strong{font-size:12px}.rent-month-card{align-items:flex-start}.rent-month-right{flex-direction:column;align-items:flex-end}.rent-month-amount .status{font-size:9px}.rent-month-note{font-size:10px}}
+
+  </style>
+  <title>Sunwave Pool | Quản lý thu chi</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <aside class="sidebar" aria-label="Điều hướng chính">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M2 16c2.5-2 4.6-2 7.1 0s4.6 2 7.1 0 4.6-2 5.8-1" stroke="white" stroke-width="2.3" stroke-linecap="round"/><path d="M2 20c2.5-2 4.6-2 7.1 0s4.6 2 7.1 0 4.6-2 5.8-1" stroke="white" stroke-width="2.3" stroke-linecap="round"/><circle cx="17.2" cy="6" r="3.4" fill="#ffe2a1"/><path d="M3 11.3c2.3-.2 3.8-1.5 6.2-1.5 2.7 0 4.1 1.8 6.3 1.8" stroke="#8ae6ed" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div><strong>Sunwave Pool</strong><span>SỔ QUỸ THÔNG MINH</span></div>
+      </div>
+      <div class="nav-label">QUẢN LÝ</div>
+      <nav id="sidebar-nav" class="nav" aria-label="Các chức năng"></nav>
+      <div class="sidebar-bottom">
+        <div class="protect-card"><span class="protect-icon">▣</span><div><strong>Dữ liệu riêng tư trên thiết bị</strong><p>Giao dịch mới lưu trong trình duyệt. Hãy sao lưu trong Cài đặt.</p></div></div>
+        <div class="sidebar-foot">SUNWAVE POOL · v1.0</div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="mini-logo">≈</span><strong>Sunwave Pool</strong></div>
+        <div class="topbar-left"><div class="eyebrow" id="breadcrumb">QUẢN LÝ TÀI CHÍNH</div><h1 id="page-title">Tổng quan</h1><p id="page-subtitle">Báo cáo vận hành hồ bơi</p></div>
+        <div class="topbar-right"><label class="month-selector" for="month-picker"><span id="month-icon"></span><input id="month-picker" type="month" aria-label="Chọn tháng báo cáo"></label><button type="button" class="btn primary top-action" data-action="new-expense" id="quick-expense"><span class="plus-glyph">+</span><span>Thêm chi phí</span></button></div>
+      </header>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="Chức năng trên điện thoại"></nav>
+      <div id="content" class="content" role="region" aria-live="polite" aria-label="Nội dung"></div>
+      <footer class="footer"><span>Quản lý rõ ràng · Chi tiêu chủ động</span><span id="footer-state">Lưu tự động trên trình duyệt</span></footer>
+    </main>
+  </div>
+  <dialog id="editor-dialog" class="editor-dialog" aria-labelledby="dialog-title"><div id="dialog-root"></div></dialog>
+  <dialog id="confirm-dialog" class="confirm-dialog" aria-labelledby="confirm-title"><div class="dialog-head"><div><div class="dialog-kicker">XÁC NHẬN</div><h2 id="confirm-title">Xác nhận</h2></div><button type="button" class="icon-button" data-action="close-confirm" aria-label="Đóng">×</button></div><p id="confirm-message"></p><div class="dialog-actions"><button class="btn subtle" data-action="close-confirm">Hủy</button><button class="btn danger" id="confirm-yes">Xác nhận</button></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <input id="backup-input" type="file" accept=".json,application/json" hidden>
+  <script>
+/* Sunwave Pool Manager — browser-only edition, no external dependencies. */
+'use strict';
+(() => {
+  const KEY = 'sunwave-pool-finance-v1';
+  const NAV = [
+    ['overview','Tổng quan','dashboard'],['rent','Tiền thuê','calendar'],
+    ['expenses','Chi phí','receipt'],['income','Khoản thu','wallet'],
+    ['reports','Báo cáo','chart'],['settings','Cài đặt','settings']
+  ];
+  const CATEGORIES = ['Điện','Nước','Hóa chất hồ bơi','Bảo trì / sửa chữa','Nhân sự','Vệ sinh','Trang thiết bị','Thuế / phí báo cáo','Khác'];
+  const INCOME_CATEGORIES = ['Vé bơi','Học bơi','Cho thuê hồ bơi','Dịch vụ khác','Khác'];
+  const METHODS = ['Tiền mặt','Chuyển khoản','Khác'];
+  const dom = {
+    content: document.getElementById('content'),
+    nav: document.getElementById('sidebar-nav'), mobileNav: document.getElementById('mobile-nav'),
+    pageTitle: document.getElementById('page-title'), subtitle: document.getElementById('page-subtitle'),
+    month: document.getElementById('month-picker'), dialog: document.getElementById('editor-dialog'),
+    dialogRoot: document.getElementById('dialog-root'), confirmDialog: document.getElementById('confirm-dialog'),
+    confirmTitle: document.getElementById('confirm-title'), confirmMessage: document.getElementById('confirm-message'),
+    confirmYes: document.getElementById('confirm-yes'), toast: document.getElementById('toast'),
+    backupInput: document.getElementById('backup-input')
+  };
+  const icons = {
+    dashboard:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 15h3M8 18h6"/>',
+    receipt:'<path d="M4 3v18l4-2 4 2 4-2 4 2V3l-4 2-4-2-4 2zM8 10h8M8 14h8"/>',
+    wallet:'<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 10h18M7 6V4h11v2M16 15h2"/>',
+    chart:'<path d="M3 3v18h18M7 17v-5M12 17V7M17 17v-9"/>',
+    settings:'<path d="M4 7h16M4 17h16M9 4v6M15 14v6"/>',
+    coin:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5c-2.5-1.7-6-.6-6 1.7s5.5.9 5.5 3.3-4 3.5-6.5 1.3M12 5.5v13"/>',
+    down:'<path d="M12 3v17m-6-6 6 6 6-6M5 5h14"/>',
+    up:'<path d="M12 21V4M6 10l6-6 6 6M5 19h14"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    check:'<circle cx="12" cy="12" r="9"/><path d="m7.5 12 3 3 6-6"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.3"/>',
+    download:'<path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/>',
+    upload:'<path d="M12 21V9m-5 5 5-5 5 5M4 7V3h16v4"/>',
+    print:'<path d="M6 9V3h12v6M6 18H4V9h16v9h-2M6 15h12v6H6z"/>',
+    folder:'<path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v11H3V7z"/>',
+    sparkle:'<path d="m12 2 2.1 6 6 2.1-6 2.1-2.1 6-2.1-6-6-2.1 6-2.1zM19 17v5M16.5 19.5h5"/>'
+  };
+  const icon = (name,size=19) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${icons[name] || icons.info}</svg>`;
+  const pad = n => String(n).padStart(2,'0');
+  const dateNow = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+  const currentMonth = () => dateNow().slice(0,7);
+  const monthIndex = period => { const [y,m] = period.split('-').map(Number); return y*12+m-1; };
+  const monthFromIndex = i => `${Math.floor(i/12)}-${pad((i%12+12)%12+1)}`;
+  const shiftMonth = (period,n) => monthFromIndex(monthIndex(period)+n);
+  const monthLabel = period => { const [y,m]=period.split('-'); return `Tháng ${Number(m)}/${y}`; };
+  const shortMonth = period => `${Number(period.slice(5))}/${period.slice(2,4)}`;
+  const formatDate = d => {if (!/^\d{4}-\d{2}-\d{2}$/.test(d||'')) return d||''; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`;};
+  const num = val => {const n=Number(val); return Number.isFinite(n) ? n : 0;};
+  const money = val => new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND',maximumFractionDigits:0}).format(num(val));
+  const compact = val => { const n=num(val); if(Math.abs(n)>=1e9) return `${(n/1e9).toFixed(n%1e9===0?0:1)} tỷ`; if(Math.abs(n)>=1e6) return `${(n/1e6).toFixed(n%1e6===0?0:1)} tr`; if(Math.abs(n)>=1e3) return `${Math.round(n/1000)}k`; return String(Math.round(n)); };
+  const esc = val => String(val??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const uid = () => (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+  const defaultDb = () => ({version:2,settings:{name:'Sunwave Pool',monthlyRent:0,rentDueDay:0,rentStart:'2026-01',landlord:''},rentSchedule:[],seedImported:false,rentPayments:[],expenses:[],income:[]});
+  const validPeriod = s => typeof s==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(s);
+  const validDate = s => typeof s==='string'&&/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(s)&&!Number.isNaN(Date.parse(`${s}T00:00:00`));
+  const normalize = raw => {
+    if(!raw || typeof raw!=='object' || !raw.settings || !Array.isArray(raw.rentPayments) || !Array.isArray(raw.expenses) || !Array.isArray(raw.income)) throw new Error('Dữ liệu không đúng định dạng sao lưu của ứng dụng.');
+    const sanitized = defaultDb();
+    sanitized.settings.name=String(raw.settings.name||'Sunwave Pool').slice(0,120);
+    sanitized.settings.monthlyRent=Math.max(0,num(raw.settings.monthlyRent));
+    sanitized.settings.rentDueDay=Math.max(0,Math.min(28,Math.round(num(raw.settings.rentDueDay))));
+    sanitized.settings.rentStart=validPeriod(raw.settings.rentStart)?raw.settings.rentStart:currentMonth();
+    sanitized.settings.landlord=String(raw.settings.landlord||'').slice(0,150);
+    sanitized.seedImported=raw.seedImported===true;
+    sanitized.rentSchedule=(Array.isArray(raw.rentSchedule)?raw.rentSchedule:[]).filter(r=>validPeriod(r.period)&&Number.isFinite(Number(r.amount))&&num(r.amount)>0).slice(0,2400).map(r=>({id:String(r.id||uid()),period:r.period,amount:num(r.amount),shares:{'Hoàng':num(r.shares?.['Hoàng']),'Đức':num(r.shares?.['Đức']),'Tuấn':num(r.shares?.['Tuấn'])},note:String(r.note||'').slice(0,1500),source:String(r.source||'Nhập thủ công').slice(0,150),tracking:r.tracking==='tracked'?'tracked':'unknown'}));
+    sanitized.rentPayments=raw.rentPayments.filter(r=>validPeriod(r.period)&&validDate(r.date)&&num(r.amount)>0).slice(0,20000).map(r=>({id:String(r.id||uid()),period:r.period,date:r.date,amount:num(r.amount),method:String(r.method||'Chuyển khoản').slice(0,80),note:String(r.note||'').slice(0,1500)}));
+    sanitized.expenses=raw.expenses.filter(r=>validDate(r.date)&&num(r.amount)>0).slice(0,20000).map(r=>({id:String(r.id||uid()),date:r.date,title:String(r.title||'Chi phí').slice(0,180),category:String(r.category||'Khác').slice(0,100),amount:num(r.amount),paid:r.paid===true,payer:String(r.payer||'Quỹ hồ bơi').slice(0,90),method:String(r.method||'Tiền mặt').slice(0,80),note:String(r.note||'').slice(0,1500)}));
+    sanitized.income=raw.income.filter(r=>validDate(r.date)&&num(r.amount)>0).slice(0,20000).map(r=>({id:String(r.id||uid()),date:r.date,title:String(r.title||'Khoản thu').slice(0,180),category:String(r.category||'Khác').slice(0,100),amount:num(r.amount),method:String(r.method||'Tiền mặt').slice(0,80),note:String(r.note||'').slice(0,1500)}));
+    return sanitized;
+  };
+  let db;
+  let storageError = false;
+  try { const saved=localStorage.getItem(KEY); db=saved?normalize(JSON.parse(saved)):defaultDb(); }
+  catch(err) { db=defaultDb(); storageError=true; console.warn('Unable to read existing data',err); }
+  // Never embed financial records in the public website. Import private backup JSON locally.
+  const lastImported=db.rentSchedule.filter(r=>r.source.includes('Excel')).map(r=>r.period).sort().at(-1);
+  let uiStored=null;try{uiStored=localStorage.getItem(KEY+'-ui-month');}catch(e){}
+  const state = {tab:NAV.find(n=>`#${n[0]}`===location.hash)?.[0]||'overview',month:validPeriod(uiStored)?uiStored:(lastImported||currentMonth()),search:'',expenseFilter:'all'};
+  const persist = () => { try{localStorage.setItem(KEY,JSON.stringify(db));storageError=false;document.getElementById('footer-state').textContent='Đã lưu tự động trên thiết bị';}catch(e){storageError=true;toast('Không thể lưu dữ liệu. Hãy xuất sao lưu và kiểm tra bộ nhớ trình duyệt.',true);document.getElementById('footer-state').textContent='Không lưu được dữ liệu';} };
+  let toastTimer;
+  function toast(msg,isError=false){ dom.toast.textContent=msg;dom.toast.classList.toggle('error',isError);dom.toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>dom.toast.classList.remove('show'),3600); }
+  const sum = (list,fn=x=>x.amount) => list.reduce((acc,item)=>acc+num(fn(item)),0);
+  const periodOf = date => String(date).slice(0,7);
+  const rentRow = period => db.rentSchedule.find(r=>r.period===period);
+  const rentExpected = period => rentRow(period)?.amount ?? (db.settings.monthlyRent>0 && monthIndex(period)>=monthIndex(db.settings.rentStart)?db.settings.monthlyRent:0);
+  const rentVerified = period => {const row=rentRow(period);return !row || row.tracking==='tracked' || rentPaid(period)>0;};
+  const rentValue = period => rentExpected(period)>0?money(rentExpected(period)):'Chưa nhập';
+  const annualRows = year => db.rentSchedule.filter(r=>r.period.startsWith(year+'-'));
+  const yearlyRent = year => sum(annualRows(year));
+  const yearlyShare = (year,name) => sum(annualRows(year),r=>r.shares[name]);
+  const rentPaymentsPeriod = period => db.rentPayments.filter(r=>r.period===period);
+  const rentPaid = period => sum(rentPaymentsPeriod(period));
+  const rentDue = period => rentExpected(period)>0 && !rentVerified(period) ? null : Math.max(0,rentExpected(period)-rentPaid(period));
+  const dueDate = period => db.settings.rentDueDay>0?`${period}-${pad(db.settings.rentDueDay)}`:null;
+  const rentStatus = period => {
+    const expected=rentExpected(period);
+    if(!expected) return ['Chưa có dữ liệu','config'];
+    if(!rentVerified(period)) return ['Chưa đối chiếu','config'];
+    if(rentPaid(period)>=expected) return ['Đã thanh toán','paid'];
+    if(rentPaid(period)>0) return ['Thanh toán một phần','due'];
+    if(dueDate(period)&&dateNow()>dueDate(period)) return ['Quá hạn đã xác nhận','overdue'];
+    if(monthIndex(period)>monthIndex(currentMonth())) return ['Sắp đến hạn','future'];
+    return ['Chưa thanh toán','due'];
+  };
+  const badge = (label,variant) => `<span class="status ${variant}">${esc(label)}</span>`;
+  const monthIncome = period => sum(db.income.filter(r=>periodOf(r.date)===period));
+  const monthExpense = period => sum(db.expenses.filter(r=>periodOf(r.date)===period&&r.paid));
+  const monthExpensePending = period => sum(db.expenses.filter(r=>periodOf(r.date)===period&&!r.paid));
+  const monthRentCash = period => sum(db.rentPayments.filter(r=>periodOf(r.date)===period));
+  const monthNet = period => monthIncome(period)-monthRentCash(period)-monthExpense(period);
+  const statBox = (name,value,sub,ic,color='') => `<div class="metric ${color}"><div class="metric-badge">${icon(ic,20)}</div><div class="metric-title">${name}</div><div class="metric-val">${money(value)}</div><div class="metric-sub">${sub}</div></div>`;
+  const header = (title,sub) => `<div class="page-head"><div><h2>${title}</h2><p>${sub}</p></div></div>`;
+  const empty = (title,desc,action='',actionLabel='') => `<div class="empty"><div class="empty-icon">${icon('folder',24)}</div><strong>${title}</strong><p>${desc}</p>${action?`<button type="button" class="btn secondary small" data-action="${action}">+ ${actionLabel}</button>`:''}</div>`;
+  const optionList = (vals, selected) => vals.map(v=>`<option value="${esc(v)}" ${v===selected?'selected':''}>${esc(v)}</option>`).join('');
+  const safeDateSort = (a,b) => b.date.localeCompare(a.date) || String(b.id).localeCompare(String(a.id));
+
+  function renderNav(){
+    const html=NAV.map(([id,label,ic])=>`<button type="button" class="nav-link ${state.tab===id?'active':''}" data-action="nav" data-tab="${id}" aria-current="${state.tab===id?'page':'false'}">${icon(ic,19)}<span>${label}</span></button>`).join('');
+    dom.nav.innerHTML=html;dom.mobileNav.innerHTML=html;
+  }
+  function render(){
+    renderNav();
+    const titles={overview:['Tổng quan','Tình hình thu chi và tiền thuê hồ bơi'],rent:['Tiền thuê hồ bơi','Theo dõi tiền thuê từng tháng và các lần thanh toán'],expenses:['Chi phí phát sinh','Ghi nhận các khoản chi vận hành hồ bơi'],income:['Quản lý khoản thu','Theo dõi các khoản tiền thực tế đã thu'],reports:['Báo cáo tài chính','Tổng hợp dòng tiền và chi phí theo tháng'],settings:['Cài đặt','Thiết lập hợp đồng thuê và bảo vệ dữ liệu']};
+    dom.pageTitle.textContent=titles[state.tab][0];dom.subtitle.textContent=titles[state.tab][1];
+    dom.month.value=state.month;
+    dom.content.innerHTML=({overview:overviewPage,rent:rentPage,expenses:expensePage,income:incomePage,reports:reportPage,settings:settingsPage}[state.tab])();
+  }
+  function overviewPage(){
+    const p=state.month, expected=rentExpected(p),paid=rentPaid(p),rem=rentDue(p),net=monthNet(p),year=p.slice(0,4),yearTotal=yearlyRent(year);
+    const recent=db.expenses.filter(x=>periodOf(x.date)===p).sort(safeDateSort).slice(0,5);
+    const categoryMap={};db.expenses.filter(x=>periodOf(x.date)===p).forEach(x=>categoryMap[x.category]=(categoryMap[x.category]||0)+x.amount);
+    const cats=Object.entries(categoryMap).sort((a,b)=>b[1]-a[1]).slice(0,5), top=Math.max(1,...cats.map(c=>c[1]));
+    return `${!db.settings.monthlyRent&&!db.rentSchedule.length&&!db.expenses.length&&!db.income.length?`<div class="hint-banner"><div><strong>Nhập dữ liệu tiền thuê của anh</strong><p>Ứng dụng trên GitHub không chứa dữ liệu riêng tư. Hãy chọn tệp JSON đã được chuyển đổi từ Excel; dữ liệu sẽ được lưu trên trình duyệt này.</p></div><button class="btn primary small" data-action="restore">Nhập dữ liệu JSON</button></div>`:''}
+      ${yearTotal?`<div class="import-summary"><div><div class="import-kicker">SỔ TIỀN THUÊ · ${year} · ${annualRows(year).length} THÁNG ĐÃ NHẬP</div><div class="import-total">${money(yearTotal)}</div><div class="import-desc">Sổ tiền thuê theo từng tháng. Cần đối chiếu riêng các khoản đã thanh toán.</div></div><div class="import-shares"><span>Hoàng <strong>${money(yearlyShare(year,'Hoàng'))}</strong></span><span>Đức <strong>${money(yearlyShare(year,'Đức'))}</strong></span><span>Tuấn <strong>${money(yearlyShare(year,'Tuấn'))}</strong></span></div></div>`:''}
+      <div class="grid metrics">
+        ${statBox('Khoản thu trong tháng',monthIncome(p),'Tổng tiền đã thu', 'up','green')}
+        ${statBox('Đã trả tiền thuê',monthRentCash(p),'Tiền thực trả trong tháng','calendar')}
+        ${statBox('Đã chi phát sinh',monthExpense(p),'Không gồm tiền thuê', 'down','orange')}
+        ${statBox('Dòng tiền thuần',net,'Khoản thu − các khoản thực chi','chart',net<0?'negative':'green')}
+      </div>
+      <div class="split">
+        <div class="panel"><div class="panel-head"><div><h2>Tiến độ thanh toán tiền thuê</h2><p>${monthLabel(p)} · ${db.settings.rentDueDay?`Hạn theo cài đặt: ngày ${pad(db.settings.rentDueDay)}`:'Chưa thiết lập hạn trả'}</p></div><button class="link-button" data-action="nav" data-tab="rent">Xem chi tiết ›</button></div>
+          <div class="rent-highlight"><div><small>Tiền thuê phải trả trong kỳ</small><strong>${rentValue(p)}</strong><small>${db.settings.landlord?`Bên cho thuê: ${esc(db.settings.landlord)}`:(rentRow(p)?'Theo sổ tiền thuê từng tháng':'Chưa có bản ghi tiền thuê')}</small></div>${badge(...rentStatus(p))}</div>
+          <div class="stats-row"><span>Đã ghi nhận thực trả <strong>${money(paid)}</strong></span><span>${expected>0?Math.min(100,Math.round(paid/expected*100)):0}%</span></div>
+          <div class="progress" aria-label="Tiến độ thanh toán"><span style="width:${expected>0?Math.min(100,paid/expected*100):0}%"></span></div>
+          <div class="stats-row"><span>${rem===null?'Tình trạng công nợ':'Còn phải trả đã đối chiếu'}</span><strong class="${rem?'negative-text':'positive-text'}">${rem===null?'Chưa xác nhận':money(rem)}</strong></div>
+          <div class="separator"></div><div class="pill-actions"><button class="btn primary small" data-action="new-rent" data-period="${p}">+ Ghi nhận trả tiền thuê</button><button class="btn outline small" data-action="edit-schedule" data-period="${p}">Sửa số tiền thuê</button></div>
+        </div>
+        <div class="panel"><div class="panel-head"><div><h2>Chi phí theo nhóm</h2><p>Gồm cả khoản chưa thanh toán</p></div><button class="link-button" data-action="nav" data-tab="expenses">Xem tất cả ›</button></div>
+          ${cats.length?cats.map(([cat,v])=>`<div class="bar-line"><span class="bar-label" title="${esc(cat)}">${esc(cat)}</span><div class="bar-track"><span style="width:${Math.max(3,Math.round(100*v/top))}%"></span></div><strong>${compact(v)} ₫</strong></div>`).join(''):empty('Chưa có chi phí','Các chi phí điện, nước, hóa chất và bảo trì sẽ hiển thị tại đây.','new-expense','Thêm chi phí')}
+          <div class="month-card-total"><span>Chi phí chưa thanh toán</span><strong class="${monthExpensePending(p)?'negative-text':''}">${money(monthExpensePending(p))}</strong></div>
+        </div>
+      </div>
+      <div class="panel section-space"><div class="panel-head"><div><h2>Chi phí ghi nhận gần đây</h2><p>Danh sách phát sinh trong ${monthLabel(p).toLowerCase()}</p></div><button class="link-button" data-action="new-expense">+ Thêm khoản chi</button></div>
+        ${recent.length?expenseTable(recent,true):empty('Tháng này chưa có chi phí','Anh có thể ghi nhận chi phí và đánh dấu đã thanh toán hoặc còn nợ.','new-expense','Thêm chi phí')}
+      </div>`;
+  }
+  function rentPage(){
+    const p=state.month,year=p.slice(0,4), months=Array.from({length:12},(_,i)=>`${year}-${pad(i+1)}`);
+    const ps=rentPaymentsPeriod(p).sort(safeDateSort);
+    const assigned=rentRow(p), due=rentDue(p), yearly=annualRows(year);
+    const noteRows=yearly.filter(x=>x.note);
+    return `<div class="summary-strip"><div class="summary-chip"><span class="label">Tổng tiền thuê ${year} (${yearly.length} tháng)</span><span class="value">${money(yearlyRent(year))}</span></div><div class="summary-chip"><span class="label">Tiền thuê ${monthLabel(p)}</span><span class="value">${rentValue(p)}</span></div><div class="summary-chip ${due!==null&&due>0?'alert':''}"><span class="label">Công nợ tháng này</span><span class="value">${due===null?'Chưa đối chiếu':money(due)}</span></div></div>
+      ${yearly.length?`<p class="soft-note">Đang quản lý ${yearly.length} kỳ thuê trong năm ${year}. Số tiền đã ghi nhận không đồng nghĩa với đã thanh toán; công nợ chỉ được xác định sau khi đối chiếu.</p>`:`<p class="soft-note">Chưa có dữ liệu tiền thuê trong năm ${year}. Có thể nhập bằng tệp JSON hoặc điền từng tháng; không tự suy đoán công nợ.</p>`}
+      <div class="split"><div class="panel"><div class="panel-head"><div><h2>Tiền thuê từng tháng · ${year}</h2><p>Nhấn Sửa để điều chỉnh số tiền và phần phân bổ</p></div><button class="btn primary small" data-action="edit-schedule" data-period="${p}">+ Ghi số tiền thuê</button></div>
+      <div class="rent-months">${months.map(m=>{const row=rentRow(m),exp=rentExpected(m),paid=rentPaid(m);return `<div class="rent-month-card ${m===p?'current':''}"><div class="rent-month-main"><div class="rent-month-name">${monthLabel(m)} ${row?.source.includes('Excel')?'<span class="tag green">Excel</span>':''}</div><div class="rent-month-sub">${row?`Hoàng ${compact(row.shares['Hoàng'])} · Đức ${compact(row.shares['Đức'])} · Tuấn ${compact(row.shares['Tuấn'])}`:'Chưa nhập dữ liệu tiền thuê'} </div>${row?.note?`<div class="rent-month-note">${esc(row.note)}</div>`:''}</div><div class="rent-month-right"><div class="rent-month-amount"><strong>${exp?money(exp):'—'}</strong><span>${exp?badge(...rentStatus(m)):'Không có số liệu'}</span></div><button class="btn outline small" data-action="edit-schedule" data-period="${m}">${row?'Sửa':'Nhập'}</button></div></div>`}).join('')}</div>
+      <div class="month-card-total"><span>Tổng số tiền thuê đã nhập (${year})</span><strong>${money(yearlyRent(year))}</strong></div>
+      </div><div class="panel"><div class="panel-head"><div><h2>Chi tiết kỳ ${monthLabel(p)}</h2><p>Phần tiền thuê của từng người</p></div></div>
+        ${assigned?`<div class="monthly-lines">${['Hoàng','Đức','Tuấn'].map(name=>`<div class="monthly-line"><span>${name}</span><strong>${money(assigned.shares[name])}</strong></div>`).join('')}<div class="monthly-line"><span><strong>Tổng tiền thuê</strong></span><strong>${money(assigned.amount)}</strong></div></div>`:empty('Chưa có số liệu thuê','Chọn một tháng có dữ liệu hoặc nhập mức thuê mới.','edit-schedule','Nhập tiền thuê')}
+        <div class="separator"></div><div class="panel-head"><div><h2>Lịch sử trả tiền</h2><p>Chỉ ghi những khoản đã thực trả và có đối chiếu</p></div><button class="btn secondary small" data-action="new-rent" data-period="${p}">+ Trả tiền</button></div>
+        ${ps.length?`<div class="table-wrap"><table class="list-table"><thead><tr><th>Ngày trả</th><th>Số tiền</th><th>Thao tác</th></tr></thead><tbody>${ps.map(x=>`<tr><td class="strong">${formatDate(x.date)}<span class="desc">${esc(x.method)}${x.note?' · '+esc(x.note):''}</span></td><td class="money">${money(x.amount)}</td><td><button class="icon-button" data-action="edit-rent" data-id="${esc(x.id)}">✎</button> <button class="icon-button delete" data-action="delete-rent" data-id="${esc(x.id)}">×</button></td></tr>`).join('')}</tbody></table></div>`:empty('Chưa có lần thanh toán được xác nhận','Tiền thuê ghi nhận không phải chứng từ đã trả.')}
+        ${assigned?.note?`<div class="callout section-space"><strong>Ghi chú gốc trong Excel:</strong> ${esc(assigned.note)}</div>`:''}
+        <div class="separator"></div><div class="monthly-lines"><div class="monthly-line"><span>Đã ghi nhận thực trả</span><strong class="positive-text">${money(rentPaid(p))}</strong></div><div class="monthly-line"><span>Còn nợ sau đối chiếu</span><strong>${due===null?'Chưa xác nhận':money(due)}</strong></div></div>
+        <p class="data-note">Tiền thuê ghi nhận và khoản thực trả là hai thông tin khác nhau. Chỉ khi đối chiếu thanh toán mới xác định chính xác công nợ.</p>
+      </div></div>`;
+  }
+  function expenseTable(list,small=false){
+    return `<div class="table-wrap"><table class="list-table"><thead><tr><th>Khoản chi</th><th class="hide-mobile">Ngày</th><th>Trạng thái</th><th class="table-amount-right">Số tiền</th><th class="actions">Thao tác</th></tr></thead><tbody>${list.map(x=>`<tr><td><strong class="strong">${esc(x.title)}</strong><span class="desc">${esc(x.category)} · ${formatDate(x.date)} · Chi bởi ${esc(x.payer||'Quỹ hồ bơi')}${x.note?' · '+esc(x.note):''}</span></td><td class="hide-mobile">${formatDate(x.date)}</td><td>${x.paid?badge('Đã trả','paid'):badge('Chưa trả','due')}</td><td class="money table-amount-right">${money(x.amount)}</td><td class="actions"><button class="icon-button" title="${x.paid?'Đánh dấu chưa trả':'Đánh dấu đã trả'}" aria-label="${x.paid?'Đánh dấu chưa trả':'Đánh dấu đã trả'}" data-action="toggle-expense" data-id="${esc(x.id)}">${x.paid?'↩':'✓'}</button>${small?'':` <button class="icon-button" title="Sửa" aria-label="Sửa khoản chi" data-action="edit-expense" data-id="${esc(x.id)}">✎</button> <button class="icon-button delete" title="Xóa" aria-label="Xóa khoản chi" data-action="delete-expense" data-id="${esc(x.id)}">×</button>`}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  function expensePage(){
+    const p=state.month,rows=db.expenses.filter(x=>periodOf(x.date)===p).sort(safeDateSort);
+    const term=state.search.toLocaleLowerCase('vi-VN').trim();
+    const filtered=rows.filter(x=>(state.expenseFilter==='all'||(state.expenseFilter==='paid'&&x.paid)||(state.expenseFilter==='unpaid'&&!x.paid))&&(!term||[x.title,x.category,x.note].some(v=>v.toLocaleLowerCase('vi-VN').includes(term))));
+    return `<div class="summary-strip"><div class="summary-chip"><span class="label">Tổng chi phí phát sinh</span><span class="value">${money(sum(rows))}</span></div><div class="summary-chip good"><span class="label">Đã thanh toán</span><span class="value">${money(sum(rows.filter(x=>x.paid)))}</span></div><div class="summary-chip ${rows.some(x=>!x.paid)?'alert':''}"><span class="label">Chưa thanh toán</span><span class="value">${money(sum(rows.filter(x=>!x.paid)))}</span></div></div>
+      <div class="panel"><div class="toolbar"><div><h2>Sổ chi phí · ${monthLabel(p)}</h2><p class="tiny">${rows.length} khoản chi được ghi nhận</p></div><div class="toolbar-actions"><button class="btn primary small" data-action="new-expense">+ Thêm chi phí</button></div></div>
+        <div class="toolbar"><input class="search-input" type="search" id="expense-search" placeholder="Tìm tên, nhóm chi phí..." value="${esc(state.search)}" aria-label="Tìm chi phí"><select class="filter-select" id="expense-filter" aria-label="Lọc trạng thái"><option value="all" ${state.expenseFilter==='all'?'selected':''}>Tất cả trạng thái</option><option value="paid" ${state.expenseFilter==='paid'?'selected':''}>Đã thanh toán</option><option value="unpaid" ${state.expenseFilter==='unpaid'?'selected':''}>Chưa thanh toán</option></select></div>
+        <div id="expense-list">${filtered.length?expenseTable(filtered):empty(rows.length?'Không có kết quả phù hợp':'Chưa có khoản chi','Hãy thêm tiền điện, nước, hóa chất, nhân sự, bảo trì hoặc khoản chi bất kỳ.','new-expense','Thêm chi phí')}</div>
+      </div>${annualRows(p.slice(0,4)).some(r=>r.note)?`<div class="panel section-space"><div class="panel-head"><div><h2>Ghi chú khoản thuế và phí từ Excel</h2><p>Chưa chuyển thành các dòng chi phí để tránh cộng trùng tiền</p></div></div><div class="monthly-lines">${annualRows(p.slice(0,4)).filter(r=>r.note).map(r=>`<div class="monthly-line"><span><strong>${monthLabel(r.period)}</strong><span class="desc" style="display:block;margin-top:5px">${esc(r.note)}</span></span><button class="btn outline small" data-action="new-expense">Rà soát / ghi chi</button></div>`).join('')}</div><p class="data-note">Hãy xác nhận thuế, phí thực tế đã trả và có nằm trong tiền thuê tháng hay không trước khi thêm mục chi phí riêng.</p></div>`:''}`;
+  }
+  function incomePage(){
+    const p=state.month,rows=db.income.filter(x=>periodOf(x.date)===p).sort(safeDateSort);
+    const grouped={}; rows.forEach(x=>grouped[x.category]=(grouped[x.category]||0)+x.amount);
+    return `<div class="summary-strip"><div class="summary-chip good"><span class="label">Tổng khoản thu trong kỳ</span><span class="value">${money(sum(rows))}</span></div><div class="summary-chip"><span class="label">Số giao dịch đã thu</span><span class="value">${rows.length} giao dịch</span></div><div class="summary-chip"><span class="label">Dòng tiền thuần trong kỳ</span><span class="value ${monthNet(p)<0?'negative-text':'positive-text'}">${money(monthNet(p))}</span></div></div>
+      <div class="split"><div class="panel"><div class="panel-head"><div><h2>Danh sách khoản thu</h2><p>${monthLabel(p)} · Tiền thực tế đã thu</p></div><button class="btn primary small" data-action="new-income">+ Ghi nhận thu</button></div>
+        ${rows.length?`<div class="table-wrap"><table class="list-table"><thead><tr><th>Nội dung</th><th>Ngày thu</th><th>Số tiền</th><th class="actions">Thao tác</th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong class="strong">${esc(x.title)}</strong><span class="desc">${esc(x.category)} · ${esc(x.method)}</span></td><td>${formatDate(x.date)}</td><td class="money positive-text">${money(x.amount)}</td><td class="actions"><button class="icon-button" data-action="edit-income" data-id="${esc(x.id)}" aria-label="Sửa khoản thu">✎</button> <button class="icon-button delete" data-action="delete-income" data-id="${esc(x.id)}" aria-label="Xóa khoản thu">×</button></td></tr>`).join('')}</tbody></table></div>`:empty('Tháng này chưa có khoản thu','Ghi nhận tiền bán vé, học bơi hoặc khoản thu khác để theo dõi dòng tiền.','new-income','Thêm khoản thu')}
+      </div><div class="panel"><div class="panel-head"><div><h2>Cơ cấu nguồn thu</h2><p>Tổng hợp theo loại hoạt động</p></div></div>${Object.keys(grouped).length?Object.entries(grouped).sort((a,b)=>b[1]-a[1]).map(([cat,v])=>`<div class="bar-line"><span class="bar-label">${esc(cat)}</span><div class="bar-track"><span style="width:${Math.round(v/Math.max(1,...Object.values(grouped))*100)}%"></span></div><strong>${money(v)}</strong></div>`).join(''):empty('Chưa có dữ liệu','Các nhóm nguồn thu sẽ hiện tại đây sau khi anh nhập giao dịch.')}
+      <div class="insight">${icon('info',20)}<div><strong>Ghi chú về khoản thu</strong><p>Mục này là tiền thực tế đã nhận. Tiền thuê hồ bơi là khoản phải chi và được quản lý độc lập.</p></div></div></div></div>`;
+  }
+  function barChart(){
+    const months=Array.from({length:6},(_,i)=>shiftMonth(state.month,i-5));
+    const max=Math.max(1,...months.flatMap(m=>[monthIncome(m),rentExpected(m),monthExpense(m)]));
+    const lines=months.map(m=>`<div class="chart-col"><div class="chart-bars"><div class="chart-bar income" title="Khoản thu ${monthLabel(m)}: ${money(monthIncome(m))}" style="height:${monthIncome(m)>0?Math.max(3,monthIncome(m)/max*100):0}%"></div><div class="chart-bar rent" title="Tiền thuê ghi nhận ${monthLabel(m)}: ${money(rentExpected(m))}" style="height:${rentExpected(m)>0?Math.max(3,rentExpected(m)/max*100):0}%"></div><div class="chart-bar expense" title="Chi phí trả ${monthLabel(m)}: ${money(monthExpense(m))}" style="height:${monthExpense(m)>0?Math.max(3,monthExpense(m)/max*100):0}%"></div></div><div class="chart-month">${shortMonth(m)}</div></div>`).join('');
+    return {months,html:`<div class="legend"><span><i></i> Khoản thu</span><span><i class="l2"></i> Tiền thuê ghi nhận</span><span><i class="l3"></i> Chi phí đã trả</span></div><div class="chart">${lines}</div>`};
+  }
+  function reportPage(){
+    const p=state.month, chart=barChart();
+    const cashSpent=monthRentCash(p)+monthExpense(p);
+    return `<div class="page-head"><div><h2>Báo cáo ${monthLabel(p)}</h2><p>Số liệu cập nhật từ các giao dịch đã ghi nhận</p></div><div class="report-buttons"><button class="btn outline small" data-action="print">${icon('print',15)} In / PDF</button><button class="btn secondary small" data-action="export-csv">${icon('download',15)} Xuất CSV</button></div></div>
+      <div class="summary-strip"><div class="summary-chip"><span class="label">Tiền thuê ghi nhận năm ${p.slice(0,4)}</span><span class="value">${money(yearlyRent(p.slice(0,4)))}</span></div><div class="summary-chip"><span class="label">Hoàng (60%)</span><span class="value">${money(yearlyShare(p.slice(0,4),'Hoàng'))}</span></div><div class="summary-chip"><span class="label">Đức (30%)</span><span class="value">${money(yearlyShare(p.slice(0,4),'Đức'))}</span></div><div class="summary-chip"><span class="label">Tuấn (10%)</span><span class="value">${money(yearlyShare(p.slice(0,4),'Tuấn'))}</span></div></div>
+      <div class="grid metrics">${statBox('Tiền đã thu',monthIncome(p),'Khoản thu thực tế','up','green')}${statBox('Tổng tiền đã chi',cashSpent,'Thuê + chi phí đã trả','down','orange')}${rentDue(p)===null?`<div class="metric"><div class="metric-title">Công nợ tiền thuê</div><div class="metric-val" style="font-size:18px">Chưa xác nhận</div><div class="metric-sub">Chưa có xác nhận thực trả</div></div>`:statBox('Công nợ tiền thuê',rentDue(p),'Sau khi đối chiếu thanh toán','clock','red')}${statBox('Dòng tiền thuần',monthNet(p),'Thu trừ chi thực tế','chart',monthNet(p)<0?'negative':'green')}</div>
+      <div class="panel"><div class="panel-head"><div><h2>Tiền thuê ghi nhận và dòng tiền 6 tháng</h2><p>Tiền thuê là số phải ghi nhận; các cột thu, chi còn lại là giao dịch thực tế</p></div></div>${chart.html}</div>
+      <div class="panel section-space"><div class="panel-head"><div><h2>Bảng tổng hợp 6 tháng</h2><p>Đơn vị: đồng Việt Nam</p></div></div><div class="table-wrap"><table class="list-table"><thead><tr><th>Tháng</th><th>Khoản thu</th><th>Tiền thuê ghi nhận</th><th>Chi phí đã trả</th><th>Thuần</th><th>Chi phí chưa trả</th></tr></thead><tbody>${chart.months.slice().reverse().map(m=>`<tr><td class="strong">${monthLabel(m)}</td><td>${money(monthIncome(m))}</td><td>${rentValue(m)}</td><td>${money(monthExpense(m))}</td><td class="strong ${monthNet(m)<0?'negative-text':'positive-text'}">${money(monthNet(m))}</td><td>${money(monthExpensePending(m))}</td></tr>`).join('')}</tbody></table></div>
+        <p class="data-note">Tiền thuê ghi nhận là số tiền trong sổ, không đồng nghĩa đã trả. Chi tiền thuê thực tế được tính theo ngày chuyển tiền; công nợ chỉ được xác định sau khi đối chiếu. Chi phí chưa trả chưa làm giảm dòng tiền thuần. Khi xuất CSV, hệ thống xuất toàn bộ dữ liệu chứ không chỉ tháng đang xem.</p>
+      </div><div class="insight">${icon('info',20)}<div><strong>Giải thích dòng tiền thuần</strong><p>Dòng tiền thuần = khoản thu đã nhận − tiền thuê đã trả − chi phí phát sinh đã thanh toán. Chỉ số này là dòng tiền vận hành đơn giản, không phải báo cáo lợi nhuận hoặc kê khai thuế.</p></div></div>`;
+  }
+  function settingsPage(){
+    const s=db.settings;
+    return `<div class="settings-grid"><div class="panel"><div class="panel-head"><div><h2>Thông tin hồ bơi và hợp đồng thuê</h2><p>Mức thuê cố định chỉ áp dụng cho tháng không có bản ghi riêng</p></div></div><form id="settings-form"><div class="form-grid"><div class="field full"><label for="setting-name">Tên hồ bơi</label><input required id="setting-name" name="name" maxlength="120" value="${esc(s.name)}"></div><div class="field full"><label for="setting-landlord">Tên bên cho thuê / chủ mặt bằng</label><input id="setting-landlord" name="landlord" maxlength="150" placeholder="Không bắt buộc" value="${esc(s.landlord)}"></div><div class="field"><label for="setting-rent">Mức thuê mặc định / tháng (VNĐ)</label><input required id="setting-rent" name="monthlyRent" type="number" min="0" step="1000" value="${s.monthlyRent}"><span class="field-hint">Để 0 nếu quản lý tiền thuê theo từng tháng</span></div><div class="field"><label for="setting-day">Hạn trả vào ngày</label><input required id="setting-day" name="rentDueDay" type="number" min="0" max="28" step="1" value="${s.rentDueDay}"><span class="field-hint">0 nếu chưa xác định; 1–28 nếu đã biết ngày hạn trả</span></div><div class="field"><label for="setting-start">Bắt đầu thuê từ tháng</label><input required id="setting-start" name="rentStart" type="month" value="${esc(s.rentStart)}"></div><div class="field"><label>Đơn vị tiền tệ</label><input value="VND – Việt Nam đồng" readonly></div></div><div class="dialog-actions"><button class="btn primary" type="submit">Lưu thiết lập</button></div></form><div class="note-box"><strong>Lưu ý:</strong> Tiền thuê của từng tháng đã nhập riêng luôn được ưu tiên. Mức mặc định chỉ dùng khi tháng đó không có số tiền riêng. Không tự suy diễn trạng thái thanh toán khi chưa đối chiếu.</div></div>
+      <div class="panel"><div class="panel-head"><div><h2>Sao lưu và quản lý dữ liệu</h2><p>Bảo vệ dữ liệu khi đổi thiết bị hoặc trình duyệt</p></div></div>
+        <div class="settings-card"><h3>Xuất dữ liệu</h3><p>CSV bao gồm số tiền thuê từng tháng, phần phân bổ Hoàng / Đức / Tuấn và các giao dịch. JSON dùng để khôi phục chính xác dữ liệu.</p><div class="settings-card-actions"><button class="btn secondary small" data-action="export-csv">${icon('download',15)} Xuất CSV</button><button class="btn outline small" data-action="backup">${icon('download',15)} Sao lưu JSON</button></div></div>
+        <div class="settings-card"><h3>Khôi phục bản sao lưu</h3><p>Nhập file JSON đã sao lưu. Tất cả dữ liệu hiện tại sẽ được thay thế sau khi xác nhận.</p><button class="btn outline small" data-action="restore">${icon('upload',15)} Nhập file JSON</button></div>
+        <div class="settings-card"><h3>Nhập dữ liệu gốc từ Excel</h3><p>Để bảo mật, dữ liệu Excel không có trong mã nguồn GitHub. Anh hãy chọn tệp sao lưu JSON riêng do em cung cấp; không đăng tệp JSON lên GitHub.</p><button class="btn secondary small" data-action="restore">${icon('upload',15)} Nhập dữ liệu tiền thuê</button></div>
+        <div class="settings-card"><h3>Xóa toàn bộ dữ liệu</h3><p>Thao tác không thể hoàn tác nếu không có tệp sao lưu JSON.</p><button class="btn small danger" data-action="reset">Xóa dữ liệu</button></div>
+        <p class="data-note">Dữ liệu trên website này lưu bằng localStorage của trình duyệt đang sử dụng. Không tự đồng bộ giữa iPhone và máy tính, không có đăng nhập và không tự sao lưu lên đám mây. Tránh dùng máy dùng chung. Nếu xóa dữ liệu Safari hoặc dùng chế độ riêng tư, dữ liệu có thể mất. Sao lưu JSON thường xuyên và giữ tệp riêng tư; không tải lên GitHub.</p>
+      </div></div>`;
+  }
+  function field(label,name,control,full=false,hint='') { return `<div class="field ${full?'full':''}"><label for="f-${name}">${label}</label>${control}${hint?`<span class="field-hint">${hint}</span>`:''}</div>`; }
+  function textField(label,name,val='',required=false,full=false,placeholder='') {return field(label,name,`<input id="f-${name}" name="${name}" type="text" maxlength="180" ${required?'required':''} placeholder="${esc(placeholder)}" value="${esc(val)}">`,full);}
+  function numberField(label,name,val='',full=false){return field(label,name,`<input id="f-${name}" name="${name}" type="number" min="1" step="1" required inputmode="numeric" value="${esc(val)}" placeholder="Nhập số tiền (VNĐ)">`,full);}
+  function selectField(label,name,choices,selected,full=false){return field(label,name,`<select id="f-${name}" name="${name}">${optionList(choices,selected)}</select>`,full);}
+  function dateField(label,name,val=dateNow()){return field(label,name,`<input id="f-${name}" name="${name}" required type="date" value="${esc(val)}">`);}
+  function noteField(val=''){return field('Ghi chú','note',`<textarea id="f-note" maxlength="1500" name="note" placeholder="Thông tin bổ sung (không bắt buộc)">${esc(val)}</textarea>`,true);}
+  function dialog(title,content,formId){dom.dialogRoot.innerHTML=`<div class="dialog-content"><div class="dialog-head"><div><div class="dialog-kicker">SUNWAVE POOL · SỔ QUỸ</div><h2 id="dialog-title">${title}</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Đóng">×</button></div><form id="${formId}">${content}<div class="dialog-actions"><button class="btn subtle" type="button" data-action="close-dialog">Hủy</button><button type="submit" class="btn primary">Lưu giao dịch</button></div></form></div>`;dom.dialog.showModal();const autofocus=dom.dialog.querySelector('input:not([type="hidden"])');if(autofocus)autofocus.focus();}
+  function editRent(id='',period=state.month){
+    const r=db.rentPayments.find(x=>x.id===id)||{id:'',date:dateNow(),amount:rentVerified(period)?Math.max(0,rentDue(period)||0):0,period,method:'Chuyển khoản',note:''};
+    const body=`<input type="hidden" name="id" value="${esc(r.id)}"><div class="form-grid">${field('Kỳ tiền thuê','period',`<input id="f-period" required name="period" type="month" value="${esc(r.period)}">`)}${dateField('Ngày thực trả','date',r.date)}${numberField('Số tiền đã trả (VNĐ)','amount',r.amount||'')}${selectField('Hình thức thanh toán','method',METHODS,r.method)}${noteField(r.note)}</div><p class="data-note">Ghi nhận được nhiều lần trả tiền cho cùng một kỳ, kể cả trả một phần. Ngày thực trả quyết định tháng dòng tiền.</p>`;
+    dialog(id?'Sửa thanh toán tiền thuê':'Ghi nhận trả tiền thuê',body,'rent-form');
+  }
+  function editSchedule(period=state.month){
+    const r=rentRow(period)||{id:'',period,amount:'',shares:{'Hoàng':'','Đức':'','Tuấn':''},note:'',source:'Nhập thủ công',tracking:'unknown'};
+    const shareFields=['Hoàng','Đức','Tuấn'].map(name=>field(`Phần ${name} (VNĐ)`,name,`<input id="f-${name}" name="${name}" type="number" min="0" step="1" inputmode="numeric" required value="${esc(r.shares[name])}" placeholder="0">`)).join('');
+    const body=`<input type="hidden" name="id" value="${esc(r.id)}"><div class="form-grid">${field('Kỳ tiền thuê','period',`<input id="f-period" name="period" type="month" required value="${esc(r.period)}">`)}${numberField('Tổng tiền thuê (VNĐ)','amount',r.amount)}${shareFields}<div class="field"><label>Chia tiền theo tỷ lệ</label><button class="btn secondary" type="button" data-action="split-schedule">Chia Hoàng 60% / Đức 30% / Tuấn 10%</button></div>${selectField('Đối chiếu tiền thuê','tracking',['Chưa xác nhận thanh toán','Đã bắt đầu đối chiếu công nợ'],r.tracking==='tracked'?'Đã bắt đầu đối chiếu công nợ':'Chưa xác nhận thanh toán',true)}${noteField(r.note)}</div><p class="data-note">Tổng 3 phần phải bằng tổng tiền thuê. Chọn “chưa xác nhận” nếu Excel chỉ ghi nhận số tiền, chưa có chứng từ đã trả.</p>${r.id?`<button type="button" class="btn danger small" data-action="delete-schedule" data-id="${esc(r.id)}">Xóa kỳ thuê này</button>`:''}`;
+    dialog(r.id?'Sửa tiền thuê tháng':'Thêm tiền thuê tháng',body,'schedule-form');
+  }
+  function editExpense(id=''){
+    const r=db.expenses.find(x=>x.id===id)||{id:'',date:dateNow(),title:'',category:'Điện',amount:'',method:'Chuyển khoản',note:'',paid:true,payer:'Quỹ hồ bơi'};
+    const body=`<input type="hidden" name="id" value="${esc(r.id)}"><div class="form-grid">${textField('Nội dung khoản chi','title',r.title,true,true,'Ví dụ: Tiền điện tháng 11')}${dateField('Ngày phát sinh','date',r.date)}${numberField('Số tiền (VNĐ)','amount',r.amount)}${selectField('Loại chi phí','category',CATEGORIES,r.category)}${selectField('Thanh toán bằng','method',METHODS,r.method)}${selectField('Người thanh toán','payer',['Quỹ hồ bơi','Hoàng','Đức','Tuấn','Khác'],r.payer||'Quỹ hồ bơi')}${selectField('Trạng thái','paid',['Đã thanh toán','Chưa thanh toán'],r.paid?'Đã thanh toán':'Chưa thanh toán',true)}${noteField(r.note)}</div>`;
+    dialog(id?'Sửa khoản chi':'Thêm chi phí phát sinh',body,'expense-form');
+  }
+  function editIncome(id=''){
+    const r=db.income.find(x=>x.id===id)||{id:'',date:dateNow(),title:'',category:'Vé bơi',amount:'',method:'Tiền mặt',note:''};
+    const body=`<input type="hidden" name="id" value="${esc(r.id)}"><div class="form-grid">${textField('Nội dung khoản thu','title',r.title,true,true,'Ví dụ: Thu học phí bơi')}${dateField('Ngày nhận tiền','date',r.date)}${numberField('Số tiền đã thu (VNĐ)','amount',r.amount)}${selectField('Nguồn thu','category',INCOME_CATEGORIES,r.category)}${selectField('Hình thức nhận','method',METHODS,r.method)}${noteField(r.note)}</div>`;
+    dialog(id?'Sửa khoản thu':'Thêm khoản thu',body,'income-form');
+  }
+  function confirmAction(title,message,callback){dom.confirmTitle.textContent=title;dom.confirmMessage.textContent=message;dom.confirmYes.onclick=()=>{dom.confirmDialog.close();callback();};dom.confirmDialog.showModal();}
+  function goTab(tab){if(!NAV.some(n=>n[0]===tab))return;state.tab=tab;state.search='';state.expenseFilter='all';history.replaceState(null,'',`#${tab}`);render();window.scrollTo({top:0,behavior:'auto'});}
+  function removeRecord(array,id,label){const rec=db[array].find(x=>x.id===id);if(!rec)return;confirmAction(`Xóa ${label}`,`Anh chắc chắn muốn xóa giao dịch ${money(rec.amount)}? Thao tác này không thể hoàn tác nếu chưa sao lưu.`,()=>{db[array]=db[array].filter(x=>x.id!==id);persist();render();toast('Đã xóa giao dịch.');});}
+  function exportFile(filename,data,type){const blob=new Blob([data],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);}
+  function backup(){exportFile(`sunwave-sao-luu-${dateNow()}.json`,JSON.stringify({...db,exportedAt:new Date().toISOString()},null,2),'application/json;charset=utf-8');toast('Đã tạo tệp sao lưu JSON.');}
+  function csvQuote(v){const raw=String(v??'');const safe=/^[\s]*[=+@]/.test(raw)?"'"+raw:raw;return `"${safe.replace(/"/g,'""')}"`;}
+  function exportCSV(){
+    const lines=[['Loại','Ngày giao dịch','Kỳ thuê','Nội dung','Danh mục','Số tiền (VND)','Trạng thái','Hình thức','Ghi chú','Hoàng (VND)','Đức (VND)','Tuấn (VND)','Nguồn','Người chi']];
+    db.rentSchedule.forEach(r=>lines.push(['Tiền thuê ghi nhận','',r.period,'Số tiền thuê theo tháng','Tiền thuê',r.amount,r.tracking==='unknown'?'Chưa đối chiếu':'Đang đối chiếu','',r.note,r.shares['Hoàng'],r.shares['Đức'],r.shares['Tuấn'],r.source,'']));
+    db.rentPayments.forEach(r=>lines.push(['Chi tiền thuê',r.date,r.period,'Trả tiền thuê hồ bơi','Tiền thuê',r.amount,'Đã thanh toán',r.method,r.note,'','','','','']));
+    db.expenses.forEach(r=>lines.push(['Chi phát sinh',r.date,'',r.title,r.category,r.amount,r.paid?'Đã thanh toán':'Chưa thanh toán',r.method,r.note,'','','','',r.payer||'Quỹ hồ bơi']));
+    db.income.forEach(r=>lines.push(['Khoản thu',r.date,'',r.title,r.category,r.amount,'Đã thu',r.method,r.note,'','','','','']));
+    lines.splice(1,lines.length-1,...lines.slice(1).sort((a,b)=>(a[1]||a[2]).localeCompare(b[1]||b[2])));
+    const csv='\uFEFF'+lines.map(row=>row.map(csvQuote).join(',')).join('\r\n');
+    exportFile(`sunwave-thu-chi-${dateNow()}.csv`,csv,'text/csv;charset=utf-8');toast('Đã xuất CSV (có thể mở bằng Excel).');
+  }
+  document.addEventListener('click',ev=>{
+    const node=ev.target.closest('[data-action]');if(!node)return;
+    const action=node.dataset.action,id=node.dataset.id||'';
+    switch(action){
+      case 'nav':goTab(node.dataset.tab);break;
+      case 'edit-schedule':editSchedule(node.dataset.period||state.month);break;
+      case 'split-schedule':{
+        const total=num(document.getElementById('f-amount')?.value);
+        const hoang=Math.round(total*0.6),duc=Math.round(total*0.3),tuan=total-hoang-duc;
+        for(const [key,value] of [['Hoàng',hoang],['Đức',duc],['Tuấn',tuan]])document.getElementById('f-'+key).value=String(value);
+        break;
+      }
+      case 'delete-schedule':{
+        const r=db.rentSchedule.find(x=>x.id===id);if(!r)break;
+        dom.dialog.close();confirmAction('Xóa số tiền thuê',`Xóa tiền thuê kỳ ${monthLabel(r.period)}? Các giao dịch thực trả (nếu có) vẫn được lưu và cần kiểm tra.`,()=>{db.rentSchedule=db.rentSchedule.filter(x=>x.id!==id);persist();render();toast('Đã xóa số tiền thuê của kỳ.');});break;
+      }
+      case 'new-rent':editRent('',node.dataset.period||state.month);break;
+      case 'edit-rent':editRent(id);break;
+      case 'delete-rent':removeRecord('rentPayments',id,'thanh toán tiền thuê');break;
+      case 'new-expense':editExpense();break;
+      case 'edit-expense':editExpense(id);break;
+      case 'delete-expense':removeRecord('expenses',id,'khoản chi');break;
+      case 'toggle-expense':{const r=db.expenses.find(x=>x.id===id);if(r){r.paid=!r.paid;persist();render();toast(r.paid?'Đã đánh dấu thanh toán.':'Đã chuyển sang chưa thanh toán.');}break;}
+      case 'new-income':editIncome();break;
+      case 'edit-income':editIncome(id);break;
+      case 'delete-income':removeRecord('income',id,'khoản thu');break;
+      case 'close-dialog':dom.dialog.close();break;
+      case 'close-confirm':dom.confirmDialog.close();break;
+      case 'backup':backup();break;
+      case 'export-csv':exportCSV();break;
+      case 'restore':dom.backupInput.click();break;
+      case 'print':window.print();break;
+      case 'reset':confirmAction('Xóa toàn bộ dữ liệu','Tất cả khoản thu, khoản chi, thanh toán tiền thuê và cài đặt sẽ bị xóa vĩnh viễn nếu không có bản sao lưu.',()=>{db=defaultDb();db.seedImported=true;persist();goTab('overview');toast('Đã xóa dữ liệu hiện tại.');});break;
+    }
+  });
+  document.addEventListener('submit',ev=>{
+    const form=ev.target, formId=form.getAttribute('id');if(!['settings-form','rent-form','expense-form','income-form','schedule-form'].includes(formId))return;
+    ev.preventDefault();if(!form.reportValidity())return;
+    const f=new FormData(form),get=n=>String(f.get(n)||'').trim();
+    if(formId==='settings-form'){
+      const rent=num(get('monthlyRent')),due=num(get('rentDueDay')),start=get('rentStart');
+      if(rent<0||!Number.isInteger(due)||due<0||due>28||!validPeriod(start)){toast('Vui lòng kiểm tra thông tin hợp đồng thuê.',true);return;}
+      db.settings={name:get('name')||'Sunwave Pool',landlord:get('landlord'),monthlyRent:rent,rentDueDay:due,rentStart:start};persist();render();toast('Đã lưu thông tin hợp đồng thuê.');return;
+    }
+    if(formId==='schedule-form'){
+      const period=get('period'),amount=num(get('amount')),id=get('id');
+      const shares={'Hoàng':num(get('Hoàng')),'Đức':num(get('Đức')),'Tuấn':num(get('Tuấn'))};
+      const totalShare=shares['Hoàng']+shares['Đức']+shares['Tuấn'];
+      if(!validPeriod(period)||!Number.isSafeInteger(amount)||amount<=0||!Object.values(shares).every(v=>Number.isSafeInteger(v)&&v>=0)||totalShare!==amount){toast('Tháng và số tiền không hợp lệ. Tổng phần Hoàng + Đức + Tuấn phải đúng bằng tiền thuê.',true);return;}
+      if(db.rentSchedule.some(r=>r.period===period&&r.id!==id)){toast('Tháng này đã có tiền thuê. Hãy sửa bản ghi hiện có.',true);return;}
+      const old=db.rentSchedule.find(r=>r.id===id);
+      const item={id:id||uid(),period,amount,shares,note:get('note'),source:old?.source||'Nhập thủ công',tracking:get('tracking')==='Đã bắt đầu đối chiếu công nợ'?'tracked':'unknown'};
+      db.rentSchedule=id?db.rentSchedule.map(r=>r.id===id?item:r):[...db.rentSchedule,item];
+      persist();dom.dialog.close();render();toast(id?'Đã cập nhật số tiền thuê.':'Đã thêm tiền thuê mới.');return;
+    }
+    const amount=num(get('amount')),date=get('date'),id=get('id');
+    if(amount<=0||!Number.isFinite(amount)||!validDate(date)){toast('Số tiền và ngày giao dịch không hợp lệ.',true);return;}
+    if(formId==='rent-form'){
+      const period=get('period');if(!validPeriod(period)){toast('Kỳ thuê không hợp lệ.',true);return;}
+      const item={id:id||uid(),date,period,amount,method:get('method'),note:get('note')};
+      db.rentPayments=id?db.rentPayments.map(r=>r.id===id?item:r):[...db.rentPayments,item];
+    } else if(formId==='expense-form'){
+      if(!get('title')){toast('Vui lòng nhập nội dung khoản chi.',true);return;}
+      const item={id:id||uid(),date,title:get('title'),amount,category:get('category'),paid:get('paid')==='Đã thanh toán',payer:get('payer')||'Quỹ hồ bơi',method:get('method'),note:get('note')};
+      db.expenses=id?db.expenses.map(r=>r.id===id?item:r):[...db.expenses,item];
+    } else {
+      if(!get('title')){toast('Vui lòng nhập nội dung khoản thu.',true);return;}
+      const item={id:id||uid(),date,title:get('title'),amount,category:get('category'),method:get('method'),note:get('note')};
+      db.income=id?db.income.map(r=>r.id===id?item:r):[...db.income,item];
+    }
+    persist();dom.dialog.close();render();toast(id?'Đã cập nhật giao dịch.':'Đã lưu giao dịch mới.');
+  });
+  dom.month.addEventListener('change',e=>{if(validPeriod(e.target.value)){state.month=e.target.value;try{localStorage.setItem(KEY+'-ui-month',state.month)}catch(err){}render();}});
+  document.addEventListener('input',ev=>{if(ev.target.id==='expense-search'){
+    state.search=ev.target.value;const input=ev.target,pos=input.selectionStart;const list=dom.content.querySelector('#expense-list');
+    const rows=db.expenses.filter(x=>periodOf(x.date)===state.month).sort(safeDateSort),term=state.search.toLocaleLowerCase('vi-VN').trim();
+    const filtered=rows.filter(x=>(state.expenseFilter==='all'||(state.expenseFilter==='paid'&&x.paid)||(state.expenseFilter==='unpaid'&&!x.paid))&&(!term||[x.title,x.category,x.note].some(v=>v.toLocaleLowerCase('vi-VN').includes(term))));
+    list.innerHTML=filtered.length?expenseTable(filtered):empty('Không có kết quả phù hợp','Thử thay đổi từ khóa hoặc bộ lọc.');
+  }});
+  document.addEventListener('change',ev=>{if(ev.target.id==='expense-filter'){state.expenseFilter=ev.target.value;render();}});
+  dom.backupInput.addEventListener('change',async ev=>{
+    const file=ev.target.files?.[0];if(!file)return;
+    try{if(file.size>8*1024*1024)throw new Error('File quá lớn. Giới hạn 8 MB.');const content=await file.text();const restored=normalize(JSON.parse(content));
+      confirmAction('Khôi phục bản sao lưu',`Nhập ${restored.rentSchedule.length} kỳ thuê, ${restored.rentPayments.length} lần trả thuê, ${restored.expenses.length} khoản chi và ${restored.income.length} khoản thu? Dữ liệu hiện tại sẽ bị thay thế.`,()=>{db=restored;const latest=db.rentSchedule.map(r=>r.period).sort().at(-1);if(latest){state.month=latest;try{localStorage.setItem(KEY+'-ui-month',latest)}catch(e){}}persist();goTab('overview');toast('Đã khôi phục dữ liệu thành công.');});
+    }catch(err){toast('Không thể nhập tệp: '+err.message,true);}finally{dom.backupInput.value='';}
+  });
+  window.addEventListener('hashchange',()=>{const tab=location.hash.replace('#','');if(NAV.some(n=>n[0]===tab)&&state.tab!==tab){state.tab=tab;render();}});
+  document.getElementById('month-icon').innerHTML=icon('calendar',17);
+  if(storageError)toast('Không đọc được dữ liệu lưu. Hãy kiểm tra bộ nhớ trình duyệt.',true);
+  render();
+})();
+
+  </script>
+
+</body>
+</html>
